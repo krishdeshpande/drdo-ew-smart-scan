@@ -24,7 +24,7 @@ from schedulers import (
     PeriodicScanInterceptor
 )
 from metrics import FOMTracker, format_fom_markdown_table
-from dataset import TuringSyntheticRadarDataset
+from dataset import TuringSyntheticRadarDataset, HuggingFaceTuringLoader
 
 
 def run_benchmark(steps: int = 1000, runs: int = 5, num_bands: int = 8, out_dir: str = "reports"):
@@ -174,6 +174,69 @@ def export_dataset(duration_sec: float = 15.0, num_bands: int = 8, out_dir: str 
     print(f"Exported to JSON: {json_file}")
 
 
+
+def fetch_hf_sample(token: str, file: str, out_dir: str):
+    print("=" * 80)
+    print(f"FETCHING HUGGING FACE TURING RADAR DATASET FILE: {file}")
+    print("=" * 80)
+    loader = HuggingFaceTuringLoader(token=token if token else None)
+    try:
+        path = loader.download_sample(filename=file, dest_dir=out_dir)
+        print(f"\nFile ready at: {path}")
+    except Exception as e:
+        print(f"\n[ERROR] {e}")
+
+
+def replay_hf_dataset(file: str, scheduler_key: str = "dqn", num_bands: int = 8):
+    print("=" * 80)
+    print(f"REPLAYING HUGGING FACE RADAR DATASET: {file}")
+    print(f"Scheduler: {scheduler_key.upper()} | Bands: {num_bands}")
+    print("=" * 80)
+    loader = HuggingFaceTuringLoader()
+    pdws = loader.load_h5_file(file, num_bands=num_bands)
+
+    schedulers_map = {
+        "dqn": DQNScheduler(num_bands),
+        "ducb": DiscountedUCBScheduler(num_bands),
+        "exp3": Exp3Scheduler(num_bands),
+        "predictive": PredictiveTemporalScheduler(num_bands),
+        "sequential": UniformSequentialScheduler(num_bands),
+        "random": RandomSweepScheduler(num_bands),
+    }
+    scheduler = schedulers_map.get(scheduler_key.lower(), schedulers_map["dqn"])
+    tracker = FOMTracker(f"{scheduler.name} (HF Replay)")
+
+    # Simulate receiver scanning across the imported pulse sequence
+    hits = 0
+    obs = np.zeros(3 * num_bands, dtype=np.float32)
+    dt = 0.025
+    max_time = pdws[-1].time_of_arrival_sec
+    n_slots = int(min(1000, max(50, max_time / dt)))
+
+    p_idx = 0
+    for s in range(n_slots):
+        slot_t0 = s * dt
+        slot_t1 = (s + 1) * dt
+        slot_pulses = []
+        while p_idx < len(pdws) and pdws[p_idx].time_of_arrival_sec < slot_t1:
+            if pdws[p_idx].time_of_arrival_sec >= slot_t0:
+                slot_pulses.append(pdws[p_idx])
+            p_idx += 1
+
+        action = scheduler.select_band(obs)
+        hit = any(p.frequency_band == action for p in slot_pulses)
+        if hit:
+            hits += 1
+            reward = 10.0
+        else:
+            reward = -1.0
+
+        scheduler.update(action, hit, 15.0 if hit else 0.0, reward, obs)
+
+    print(f"\nReplay Complete over {n_slots} time slots:")
+    print(f"  Scheduler: {scheduler.name}")
+    print(f"  Intercepts: {hits}/{n_slots} ({hits/n_slots*100:.1f}%)")
+
 def main():
     parser = argparse.ArgumentParser(description="DRDO EW Smart Scan Receiver Scheduler")
     subparsers = parser.add_subparsers(dest="command", help="Sub-command to execute")
@@ -203,6 +266,17 @@ def main():
     p_serve.add_argument("--http-port", type=int, default=8080, help="HTTP port")
     p_serve.add_argument("--ws-port", type=int, default=8765, help="WebSocket port")
 
+    # HF Downloader parser
+    p_hf = subparsers.add_parser("fetch-hf", help="Download sample from Hugging Face gated dataset")
+    p_hf.add_argument("--token", type=str, default="", help="Hugging Face access token (HF_TOKEN)")
+    p_hf.add_argument("--file", type=str, default="archive/test/test_0.h5", help="File path in HF repo")
+    p_hf.add_argument("--out-dir", type=str, default="data", help="Output directory")
+
+    # HF Replay parser
+    p_rep = subparsers.add_parser("replay-hf", help="Replay scheduler on Hugging Face .h5 dataset file")
+    p_rep.add_argument("--file", type=str, required=True, help="Path to .h5 dataset file")
+    p_rep.add_argument("--scheduler", type=str, default="dqn", help="Scheduler: dqn, ducb, exp3, predictive, sequential")
+
     args = parser.parse_args()
 
     if args.command == "benchmark":
@@ -211,6 +285,10 @@ def main():
         train_dqn(episodes=args.episodes, steps_per_episode=args.steps, num_bands=args.bands, out_path=args.out)
     elif args.command == "dataset":
         export_dataset(duration_sec=args.duration, num_bands=args.bands, out_dir=args.out_dir)
+    elif args.command == "fetch-hf":
+        fetch_hf_sample(token=args.token, file=args.file, out_dir=args.out_dir)
+    elif args.command == "replay-hf":
+        replay_hf_dataset(file=args.file, scheduler_key=args.scheduler)
     elif args.command == "serve":
         os.environ["EW_HTTP_PORT"] = str(args.http_port)
         os.environ["EW_WS_PORT"] = str(args.ws_port)
