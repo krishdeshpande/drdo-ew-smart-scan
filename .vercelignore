@@ -1,0 +1,18 @@
+# Ignore Python environment and backend files for Vercel static edge deployment
+requirements.txt
+cli.py
+ew_simulator/
+schedulers/
+metrics/
+dataset/
+models/
+reports/
+tests/
+Dockerfile
+docker-compose.yml
+render.yaml
+Procfile
+*.pt
+*.csv
+*.json
+*.py
