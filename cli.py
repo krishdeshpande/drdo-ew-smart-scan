@@ -292,9 +292,9 @@ def main():
     elif args.command == "serve":
         os.environ["EW_HTTP_PORT"] = str(args.http_port)
         os.environ["EW_WS_PORT"] = str(args.ws_port)
+        os.environ["PORT"] = str(args.http_port)
         from ui.server import main as server_main
-        import asyncio
-        asyncio.run(server_main())
+        server_main()
     else:
         parser.print_help()
 

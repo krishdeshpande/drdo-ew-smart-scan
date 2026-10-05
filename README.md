@@ -147,17 +147,28 @@ Each intercepted pulse is converted into standard **Pulse Descriptor Words (PDWs
 
 ### Prerequisites
 - Python 3.8 or higher
-- PyTorch, NumPy, SciPy, Pandas, WebSockets
+- PyTorch, NumPy, SciPy, Pandas, AioHTTP, WebSockets
 
 ### Setup
 ```bash
 # Clone the repository
-git clone https://github.com/<YOUR-USERNAME>/drdo-ew-smart-scan.git
+git clone https://github.com/krishdeshpande/drdo-ew-smart-scan.git
 cd drdo-ew-smart-scan
 
-# Install dependencies (if not already installed)
-pip install torch numpy scipy pandas websockets
+# Install dependencies
+pip install -r requirements.txt
 ```
+
+### Docker Deployment
+```bash
+# Run with Docker Compose
+docker compose up -d
+
+# Or run directly with Docker
+docker build -t sentinel-ew-dashboard:latest .
+docker run -p 8080:8080 sentinel-ew-dashboard:latest
+```
+*(See [DEPLOYMENT.md](DEPLOYMENT.md) for 1-click cloud deployment on Hugging Face Spaces, Render, and Railway).*
 
 ### CLI Commands
 
@@ -168,11 +179,11 @@ python cli.py benchmark --steps 1000 --runs 5 --bands 8 --out-dir reports
 ```
 
 #### 2. Launch Interactive Tactical EW Dashboard
-Starts the asynchronous simulation server and opens the tactical web interface:
+Starts the unified simulation server and opens the tactical web interface:
 ```bash
-python cli.py serve --http-port 8080 --ws-port 8765
+python cli.py serve --http-port 8080
 ```
-Open **`http://localhost:8080/dashboard.html`** in your browser to view:
+Open **`http://localhost:8080/`** (or `http://localhost:8080/dashboard.html`) in your browser to view:
 - Real-time **2D Waterfall (Frequency Band vs. Time)** showing ground truth vs. receiver dwell trajectory.
 - Live **Power Spectrum vs. Sensitivity Threshold (-85 dBm)**.
 - Real-time DRDO **Figures of Merit** (Pd, Pfa, Intercept Rate, Time Error).

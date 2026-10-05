@@ -13,10 +13,25 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from typing import Dict, Any, Optional, List
 
+# Ensure repository root is on sys.path
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+try:
+    from aiohttp import web
+    HAS_AIOHTTP = True
+except ImportError:
+    HAS_AIOHTTP = False
+
 try:
     import websockets
+    HAS_WEBSOCKETS = True
 except ImportError:
-    print("ERROR: websockets not installed. Run: pip install websockets")
+    HAS_WEBSOCKETS = False
+
+if not HAS_AIOHTTP and not HAS_WEBSOCKETS:
+    print("ERROR: Neither 'aiohttp' nor 'websockets' is installed. Run: pip install aiohttp websockets")
     sys.exit(1)
 
 from ew_simulator import (
@@ -38,8 +53,9 @@ from schedulers import (
 )
 from metrics import FOMTracker
 
+PORT = int(os.environ.get("PORT", os.environ.get("EW_HTTP_PORT", "8080")))
 WS_PORT = int(os.environ.get("EW_WS_PORT", "8765"))
-HTTP_PORT = int(os.environ.get("EW_HTTP_PORT", "8080"))
+HTTP_PORT = PORT
 
 SCHEDULER_REGISTRY = {
     "dqn": lambda n: DQNScheduler(n),
@@ -118,10 +134,13 @@ class EWSimulationServer:
         if not self.clients:
             return
         msg = json.dumps(payload)
-        await asyncio.gather(
-            *[client.send(msg) for client in list(self.clients)],
-            return_exceptions=True
-        )
+        coros = []
+        for client in list(self.clients):
+            if hasattr(client, "send_str"):
+                coros.append(client.send_str(msg))
+            else:
+                coros.append(client.send(msg))
+        await asyncio.gather(*coros, return_exceptions=True)
 
     async def handle_client_message(self, data: str):
         try:
@@ -243,15 +262,85 @@ def run_http_server():
     httpd.serve_forever()
 
 
-async def main():
+def run_unified_server(port: int):
+    ui_dir = Path(__file__).parent.resolve()
+    app = web.Application()
+
+    async def index_handler(request):
+        dashboard_path = ui_dir / "dashboard.html"
+        return web.FileResponse(dashboard_path)
+
+    async def health_handler(request):
+        return web.json_response({
+            "status": "online",
+            "system": "DRDO SENTINEL-EW Tactical C2",
+            "scheduler": sim_server.current_scheduler_key,
+            "connected_clients": len(sim_server.clients)
+        })
+
+    async def aiohttp_ws_handler(request):
+        ws = web.WebSocketResponse()
+        await ws.prepare(request)
+        sim_server.clients.add(ws)
+        try:
+            async for msg in ws:
+                if msg.type == web.WSMsgType.TEXT:
+                    await sim_server.handle_client_message(msg.data)
+                elif msg.type == web.WSMsgType.ERROR:
+                    break
+        finally:
+            sim_server.clients.discard(ws)
+        return ws
+
+    async def start_background_sim(app_instance):
+        app_instance["sim_task"] = asyncio.create_task(sim_server.run_simulation_loop())
+
+    async def cleanup_background_sim(app_instance):
+        if "sim_task" in app_instance:
+            app_instance["sim_task"].cancel()
+            try:
+                await app_instance["sim_task"]
+            except asyncio.CancelledError:
+                pass
+
+    app.router.add_get("/", index_handler)
+    app.router.add_get("/dashboard.html", index_handler)
+    app.router.add_get("/health", health_handler)
+    app.router.add_get("/ws", aiohttp_ws_handler)
+
+    app.on_startup.append(start_background_sim)
+    app.on_cleanup.append(cleanup_background_sim)
+
+    print("=" * 65)
+    print("  SENTINEL-EW // Cognitive Tactical Radar C2 System Online")
+    print(f"  HTTP Dashboard : http://0.0.0.0:{port}/")
+    print(f"  WebSocket Feed : ws://0.0.0.0:{port}/ws")
+    print(f"  Health Check   : http://0.0.0.0:{port}/health")
+    print("=" * 65)
+    web.run_app(app, host="0.0.0.0", port=port, print=None)
+
+
+def run_dual_port_server():
     threading.Thread(target=run_http_server, daemon=True).start()
-    async with websockets.serve(ws_handler, "0.0.0.0", WS_PORT):
-        print(f"[WEBSOCKET] Telemetry server listening on ws://localhost:{WS_PORT}")
-        await sim_server.run_simulation_loop()
+    async def legacy_main():
+        async with websockets.serve(ws_handler, "0.0.0.0", WS_PORT):
+            print(f"[WEBSOCKET] Telemetry server listening on ws://localhost:{WS_PORT}")
+            await sim_server.run_simulation_loop()
+    try:
+        asyncio.run(legacy_main())
+    except KeyboardInterrupt:
+        print("\n[SERVER] Stopped.")
+
+
+def main():
+    if HAS_AIOHTTP and not os.environ.get("EW_FORCE_DUAL_PORT"):
+        run_unified_server(PORT)
+    else:
+        run_dual_port_server()
 
 
 if __name__ == "__main__":
     try:
-        asyncio.run(main())
+        main()
     except KeyboardInterrupt:
         print("\n[SERVER] Stopped.")

@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  sentinel-ew:
+    build: .
+    image: sentinel-ew-dashboard:latest
+    container_name: sentinel_ew_c2
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - PYTHONUNBUFFERED=1
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

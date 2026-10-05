@@ -3,3 +3,8 @@ __pycache__/
 .pytest_cache/
 .vscode/
 .idea/
+pptx_dump.json
+template_dump.json
+pptx_clean_dump.txt
+test_edge.png
+

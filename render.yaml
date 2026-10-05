@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: sentinel-ew-dashboard
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python ui/server.py
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 10000

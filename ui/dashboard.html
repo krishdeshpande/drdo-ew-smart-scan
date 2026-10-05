@@ -546,9 +546,28 @@ function toggleAudio() {
   if (audioEnabled) playRadarChirp(800, 0.05);
 }
 
+let wsFallback = false;
+
 function connectWS() {
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const host = window.location.hostname || 'localhost';
-  ws = new WebSocket('ws://' + host + ':8765');
+  
+  // Single-port URL: /ws on same host/port (Render, Hugging Face, Docker, aiohttp)
+  // Fallback: legacy dual-port mode (port 8765)
+  let targetUrl;
+  if (!wsFallback) {
+    targetUrl = `${protocol}//${window.location.host}/ws`;
+  } else {
+    targetUrl = `${protocol}//${host}:8765`;
+  }
+
+  try {
+    ws = new WebSocket(targetUrl);
+  } catch (err) {
+    wsFallback = !wsFallback;
+    setTimeout(connectWS, 1500);
+    return;
+  }
 
   ws.onopen = () => {
     document.getElementById('wsDot').classList.add('connected');
@@ -558,6 +577,7 @@ function connectWS() {
   ws.onclose = () => {
     document.getElementById('wsDot').classList.remove('connected');
     document.getElementById('wsStatus').textContent = 'OFFLINE // RECONNECTING...';
+    wsFallback = !wsFallback;
     setTimeout(connectWS, 1500);
   };
 
