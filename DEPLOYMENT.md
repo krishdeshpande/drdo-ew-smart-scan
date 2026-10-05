@@ -10,15 +10,31 @@ The system uses a **unified single-port architecture**: HTTP static assets (`/`)
 
 | Method | Cost | Setup Time | Best For |
 | :--- | :---: | :---: | :--- |
-| **Option 1: Hugging Face Spaces (Docker)** | **Free** | 2 minutes | AI/ML hackathon showcases, public portfolio links, zero maintenance |
-| **Option 2: Render.com** | **Free** | 2 minutes | Permanent public URL directly linked to your GitHub repo |
-| **Option 3: Railway.app** | **Free Tier** | 1 minute | Instant one-click git push deployment |
-| **Option 4: Local Docker / Compose** | **Free** | 30 seconds | Running locally or on an internal defense VPS |
-| **Option 5: Instant Cloudflare Tunnel** | **Free** | 10 seconds | Instant live public HTTPS URL from your running laptop |
+| **Option 1: Vercel (Edge CDN)** | **Free** | 30 seconds | Instant global deployment, zero cold starts, client cognitive engine |
+| **Option 2: Hugging Face Spaces (Docker)** | **Free** | 2 minutes | Full Python backend in Docker, permanent AI showcase link |
+| **Option 3: Render.com** | **Free** | 2 minutes | Permanent public URL directly linked to your GitHub repo |
+| **Option 4: Railway.app** | **Free Tier** | 1 minute | Instant one-click git push deployment |
+| **Option 5: Local Docker / Compose** | **Free** | 30 seconds | Running locally or on an internal defense VPS |
+| **Option 6: Instant Cloudflare Tunnel** | **Free** | 10 seconds | Instant live public HTTPS URL from your running laptop |
 
 ---
 
-## Option 1: Hugging Face Spaces (Recommended - Free & Permanent)
+## Option 1: Vercel (Recommended — Instant 1-Click Deploy)
+
+Vercel provides ultra-fast global edge hosting with 100% uptime and zero server maintenance. The tactical dashboard contains an **Integrated Client Cognitive Simulation Engine** that runs full RF signal processing, online reinforcement learning scheduling, 2D waterfall cascades, and 360° PPI radar sweeping directly on the browser edge.
+
+### Steps to Deploy on Vercel:
+1. Go to [vercel.com/new](https://vercel.com/new) and log in with your GitHub account.
+2. Under **"Import Git Repository"**, find **`drdo-ew-smart-scan`** and click **Import**.
+3. In the project configuration:
+   - **Framework Preset**: Leave as **Other**.
+   - **Root Directory**: `./` (leave default).
+   - **Build & Output Settings**: Default (no build command needed).
+4. Click **Deploy**.
+5. In ~15 seconds, Vercel will launch your live site at:
+   `https://drdo-ew-smart-scan.vercel.app` (or your custom project name).
+
+---
 
 Hugging Face Spaces provides persistent container hosting with free HTTPS and WebSocket support.
 
