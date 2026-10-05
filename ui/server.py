@@ -1,6 +1,7 @@
 """
-Async WebSocket & HTTP Server for Real-Time Tactical Electronic Warfare Dashboard.
-Streams simulation telemetry, spectrum waterfall frames, and DRDO figures of merit.
+Enhanced Async WebSocket & HTTP Server for Tactical Electronic Warfare Dashboard.
+Streams high-fidelity simulation telemetry: 2D waterfall, 360-deg radar PPI scope,
+real-time Figures of Merit, PDW decodes, and interactive scenario injection.
 """
 
 import os
@@ -10,7 +11,7 @@ import asyncio
 import threading
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 try:
     import websockets
@@ -18,7 +19,13 @@ except ImportError:
     print("ERROR: websockets not installed. Run: pip install websockets")
     sys.exit(1)
 
-from ew_simulator import RFEnvironment, create_standard_ew_scenario
+from ew_simulator import (
+    RFEnvironment,
+    create_standard_ew_scenario,
+    SpatialScanningRadar,
+    FrequencyAgileEmitter,
+    BurstCommunicationEmitter
+)
 from schedulers import (
     BaseScheduler,
     UniformSequentialScheduler,
@@ -35,13 +42,13 @@ WS_PORT = int(os.environ.get("EW_WS_PORT", "8765"))
 HTTP_PORT = int(os.environ.get("EW_HTTP_PORT", "8080"))
 
 SCHEDULER_REGISTRY = {
-    "sequential": lambda n: UniformSequentialScheduler(n),
-    "random": lambda n: RandomSweepScheduler(n),
+    "dqn": lambda n: DQNScheduler(n),
     "ducb": lambda n: DiscountedUCBScheduler(n),
     "exp3": lambda n: Exp3Scheduler(n),
-    "dqn": lambda n: DQNScheduler(n),
     "predictive": lambda n: PredictiveTemporalScheduler(n),
     "periodic": lambda n: PeriodicScanInterceptor(n),
+    "sequential": lambda n: UniformSequentialScheduler(n),
+    "random": lambda n: RandomSweepScheduler(n),
 }
 
 
@@ -49,18 +56,31 @@ class EWSimulationServer:
     def __init__(self, num_bands: int = 8):
         self.num_bands = num_bands
         self.env = RFEnvironment(num_bands=num_bands, dt_sec=0.025)
-        self.current_scheduler_key = "ducb"
+        self.current_scheduler_key = "dqn"
         self.scheduler: BaseScheduler = SCHEDULER_REGISTRY[self.current_scheduler_key](num_bands)
+        
+        # Load trained weights if available
+        weights_path = Path("models/dqn_weights.pt")
+        if weights_path.exists() and hasattr(self.scheduler, "load_weights"):
+            try:
+                self.scheduler.load_weights(str(weights_path))
+                print(f"[SERVER] Loaded pre-trained DQN weights from {weights_path}")
+            except Exception as e:
+                print(f"[SERVER] Note on loading weights: {e}")
+
         self.fom_tracker = FOMTracker(self.scheduler.name)
         self.is_running = True
-        self.step_delay = 0.06  # seconds per step for visual smoothness
+        self.step_delay = 0.05
         self.clients = set()
-        self.lock = asyncio.Lock()
 
     def set_scheduler(self, key: str):
         if key in SCHEDULER_REGISTRY:
             self.current_scheduler_key = key
             self.scheduler = SCHEDULER_REGISTRY[key](self.num_bands)
+            if key == "dqn":
+                weights_path = Path("models/dqn_weights.pt")
+                if weights_path.exists() and hasattr(self.scheduler, "load_weights"):
+                    self.scheduler.load_weights(str(weights_path))
             self.fom_tracker = FOMTracker(self.scheduler.name)
             print(f"[SERVER] Switched to scheduler: {self.scheduler.name}")
 
@@ -68,6 +88,31 @@ class EWSimulationServer:
         self.env.reset()
         self.scheduler.reset()
         self.fom_tracker.reset()
+
+    def inject_threat(self, threat_type: str):
+        if threat_type == "agile_surge":
+            new_emitter = FrequencyAgileEmitter(
+                emitter_id=f"SURGE_AGILE_{len(self.env.emitters)+1}",
+                name="Hostile Agile Jammer/Radar",
+                bands=[0, 1, 3, 5],
+                hop_dwell_steps=2,
+                tx_power_dbm=60.0,
+                threat_level=5
+            )
+            self.env.emitters.append(new_emitter)
+            print(f"[SERVER] Injected high-threat agile emitter: {new_emitter.name}")
+        elif threat_type == "drone_swarm":
+            new_emitter = BurstCommunicationEmitter(
+                emitter_id=f"SWARM_UAS_{len(self.env.emitters)+1}",
+                name="Kamikaze Drone Telemetry Link",
+                band=3 % self.num_bands,
+                burst_rate=0.45,
+                burst_duration_steps=4,
+                tx_power_dbm=42.0,
+                threat_level=4
+            )
+            self.env.emitters.append(new_emitter)
+            print(f"[SERVER] Injected drone swarm comm link: {new_emitter.name}")
 
     async def broadcast(self, payload: Dict[str, Any]):
         if not self.clients:
@@ -83,15 +128,17 @@ class EWSimulationServer:
             req = json.loads(data)
             cmd = req.get("command")
             if cmd == "set_scheduler":
-                self.set_scheduler(req.get("scheduler", "ducb"))
+                self.set_scheduler(req.get("scheduler", "dqn"))
             elif cmd == "set_speed":
-                self.step_delay = float(req.get("delay", 0.06))
+                self.step_delay = float(req.get("delay", 0.05))
             elif cmd == "pause":
                 self.is_running = False
             elif cmd == "resume":
                 self.is_running = True
             elif cmd == "reset":
                 self.reset()
+            elif cmd == "inject_threat":
+                self.inject_threat(req.get("threat_type", "agile_surge"))
         except Exception as e:
             print(f"[SERVER] Error handling client message: {e}")
 
@@ -99,14 +146,10 @@ class EWSimulationServer:
         obs = self.env.reset()
         while True:
             if self.is_running:
-                # 1. Scheduler selects target band
                 action = self.scheduler.select_band(obs)
-
-                # 2. Step environment
                 res = self.env.step(action)
                 next_obs = self.env.get_observation()
 
-                # 3. Update scheduler
                 self.scheduler.update(
                     action=action,
                     hit=res.measurement.hit,
@@ -117,11 +160,34 @@ class EWSimulationServer:
                 )
                 obs = next_obs
 
-                # 4. Record Figures of Merit
                 self.fom_tracker.record_step(res, self.scheduler)
                 fom = self.fom_tracker.compute()
 
-                # 5. Build telemetry packet
+                # Collect emitter details for PPI scope
+                emitter_positions = []
+                for tx in res.active_transmissions:
+                    aoa = 0.0
+                    if tx.pdw and "aoa_deg" in tx.pdw:
+                        aoa = tx.pdw["aoa_deg"]
+                    elif "SURV" in tx.emitter_id:
+                        aoa = 30.0
+                    elif "AGILE" in tx.emitter_id:
+                        aoa = 145.0
+                    elif "DRONE" in tx.emitter_id:
+                        aoa = 260.0
+                    else:
+                        aoa = (tx.band * 45.0) % 360.0
+
+                    emitter_positions.append({
+                        "id": tx.emitter_id,
+                        "type": tx.emitter_type,
+                        "threat": tx.threat_level,
+                        "band": tx.band,
+                        "aoa_deg": aoa,
+                        "is_mainlobe": tx.is_mainlobe,
+                        "pwr_dbm": tx.tx_power_dbm
+                    })
+
                 packet = {
                     "step": res.step_idx,
                     "time_sec": round(res.time_sec, 3),
@@ -134,10 +200,12 @@ class EWSimulationServer:
                     "threat_level": res.measurement.threat_level,
                     "ground_truth_bands": res.ground_truth_active_bands,
                     "all_bands_powers": [round(float(p), 1) for p in res.all_bands_powers],
+                    "active_emitters": emitter_positions,
                     "reward": round(res.reward, 2),
                     "cumulative_reward": fom.total_reward,
                     "scheduler_name": self.scheduler.name,
                     "scheduler_key": self.current_scheduler_key,
+                    "pdw": res.measurement.pdw,
                     "fom": {
                         "pd_pct": round(fom.probability_of_detection_pd * 100.0, 1),
                         "pfa": round(fom.probability_of_false_alarm_pfa, 4),

@@ -3,25 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DRDO EW ? Smart Scan Receiver Scheduler</title>
+<title>DRDO EW // C2 Tactical Electronic Support System</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
 
   :root {
-    --bg:        #080c0f;
-    --panel:     #0c1318;
-    --panel-sub: #111a22;
-    --border:    #1a2a1a;
-    --border-hl: #00ff8844;
-    --accent:    #00ff88;
-    --cyan:      #00e5ff;
-    --dim:       #1e3a2a;
-    --text:      #c8d8c8;
-    --muted:     #4a6a4a;
-    --warn:      #ff4444;
-    --orange:    #ff9500;
-    --mono:      'Share Tech Mono', monospace;
-    --sans:      'Rajdhani', sans-serif;
+    --bg:          #05080b;
+    --panel:       #0a1015;
+    --panel-sub:   #0f171e;
+    --border:      #162520;
+    --border-glow: #00ff8844;
+    --accent:      #00ff88;
+    --accent-glow: rgba(0, 255, 136, 0.4);
+    --cyan:        #00e5ff;
+    --cyan-glow:   rgba(0, 229, 255, 0.4);
+    --orange:      #ff9500;
+    --warn:        #ff3b30;
+    --dim:         #14251c;
+    --text:        #d0e2d5;
+    --muted:       #4c6e58;
+    --mono:        'Share Tech Mono', monospace;
+    --sans:        'Rajdhani', sans-serif;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,7 +36,7 @@
     overflow-x: hidden;
   }
 
-  /* Scan-line background */
+  /* CRT Scanline & Phosphor Vignette Overlay */
   body::before {
     content: '';
     position: fixed; inset: 0;
@@ -42,88 +44,115 @@
       0deg,
       transparent,
       transparent 2px,
-      rgba(0,255,136,0.015) 2px,
-      rgba(0,255,136,0.015) 4px
+      rgba(0, 255, 136, 0.015) 2px,
+      rgba(0, 255, 136, 0.015) 4px
     );
     pointer-events: none;
     z-index: 999;
+  }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(circle at center, transparent 65%, rgba(0, 0, 0, 0.6) 100%);
+    pointer-events: none;
+    z-index: 998;
   }
 
   header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 24px;
-    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
     background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
   }
 
   .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     font-family: var(--mono);
-    font-size: 18px;
+    font-size: 17px;
+    font-weight: 700;
     color: var(--accent);
     letter-spacing: 3px;
-    font-weight: 700;
+    text-shadow: 0 0 10px var(--accent-glow);
   }
 
-  .logo span {
-    color: var(--muted);
-    font-size: 11px;
-    margin-left: 12px;
+  .badge-tag {
+    background: rgba(0, 255, 136, 0.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 2px;
     letter-spacing: 2px;
   }
 
-  .header-status {
+  .header-telemetry {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 20px;
     font-family: var(--mono);
     font-size: 11px;
     color: var(--muted);
   }
 
-  .ws-dot {
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--panel-sub);
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+
+  .dot {
     width: 8px; height: 8px;
     border-radius: 50%;
     background: var(--warn);
-    display: inline-block;
-    margin-right: 6px;
     transition: background 0.3s;
   }
-  .ws-dot.connected { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  .dot.connected { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
 
-  /* Main Grid Layout */
-  .main {
+  /* Main Workspace Layout */
+  .main-grid {
     display: grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 420px;
     gap: 0;
-    height: calc(100vh - 53px);
+    height: calc(100vh - 51px);
   }
 
-  .left-pane {
+  /* Left Panel: Controls + Spectrum + Waterfall */
+  .left-viewport {
     display: flex;
     flex-direction: column;
-    padding: 16px;
-    gap: 16px;
+    padding: 14px;
+    gap: 12px;
     overflow-y: auto;
   }
 
-  .control-panel {
+  .control-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     background: var(--panel);
     border: 1px solid var(--border);
-    padding: 12px 16px;
+    padding: 10px 14px;
     border-radius: 2px;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
-  .control-group {
+  .ctrl-group {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 11px;
   }
 
   select, button, input[type=range] {
@@ -131,56 +160,65 @@
     border: 1px solid var(--dim);
     color: var(--accent);
     font-family: var(--mono);
-    padding: 6px 12px;
+    font-size: 11px;
+    padding: 6px 10px;
     border-radius: 2px;
     outline: none;
     cursor: pointer;
+    transition: all 0.2s;
   }
 
   button:hover {
     background: var(--dim);
     border-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
   }
 
-  .waterfall-panel {
+  .btn-warn {
+    color: var(--orange);
+    border-color: rgba(255, 149, 0, 0.4);
+  }
+  .btn-warn:hover {
+    border-color: var(--orange);
+    box-shadow: 0 0 8px rgba(255, 149, 0, 0.4);
+  }
+
+  /* Visualizer Panels */
+  .hud-panel {
     background: var(--panel);
     border: 1px solid var(--border);
-    padding: 12px;
+    padding: 10px 12px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    flex: 1;
+    gap: 6px;
+    border-radius: 2px;
   }
 
-  .panel-title {
+  .panel-hdr {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 10px;
     color: var(--accent);
     letter-spacing: 2px;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 6px;
+    padding-bottom: 5px;
   }
 
   canvas {
     display: block;
     width: 100%;
     image-rendering: pixelated;
-    background: #04080a;
-    border: 1px solid rgba(0,255,136,0.1);
+    background: #04070a;
+    border: 1px solid rgba(0, 255, 136, 0.08);
   }
 
-  #waterfallCanvas {
-    height: 280px;
-  }
+  #waterfallCanvas { height: 260px; }
+  #spectrumCanvas { height: 90px; }
 
-  #spectrumCanvas {
-    height: 90px;
-  }
-
-  /* Right Sidebar */
-  .sidebar {
+  /* Right Sidebar: Radar PPI + Figures of Merit + PDW Decoder */
+  .right-viewport {
     background: var(--panel);
     border-left: 1px solid var(--border);
     display: flex;
@@ -188,74 +226,100 @@
     overflow-y: auto;
   }
 
-  .metric-card {
-    padding: 16px 20px;
+  .sidebar-section {
+    padding: 12px 16px;
     border-bottom: 1px solid var(--border);
   }
 
-  .metric-label {
+  .sec-label {
     font-family: var(--mono);
     font-size: 10px;
     color: var(--muted);
     letter-spacing: 2px;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
   }
 
-  .metric-val-large {
-    font-family: var(--mono);
-    font-size: 28px;
-    color: var(--accent);
+  /* Radar Scope Container */
+  .radar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 6px 0;
   }
 
-  .metric-val-large.warn { color: var(--warn); }
-  .metric-val-large.orange { color: var(--orange); }
+  #radarCanvas {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.1) inset, 0 0 10px rgba(0, 0, 0, 0.8);
+    background: #030608;
+  }
 
-  .metric-grid {
+  /* Radial Gauge Grid */
+  .gauge-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 8px;
+    gap: 10px;
+    margin-top: 4px;
   }
 
-  .metric-sub {
+  .gauge-card {
     background: var(--panel-sub);
-    padding: 8px 10px;
-    border: 1px solid rgba(26,42,26,0.4);
-  }
-
-  .progress-bar {
-    height: 6px;
-    background: var(--dim);
-    margin-top: 6px;
+    border: 1px solid var(--border);
+    padding: 8px 12px;
     border-radius: 2px;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
-  .progress-fill {
-    height: 100%;
-    background: var(--accent);
-    width: 0%;
-    transition: width 0.2s;
+  .gauge-val {
+    font-family: var(--mono);
+    font-size: 22px;
+    color: var(--accent);
+    text-shadow: 0 0 8px var(--accent-glow);
   }
 
-  .log-section {
+  .gauge-val.cyan { color: var(--cyan); text-shadow: 0 0 8px var(--cyan-glow); }
+  .gauge-val.orange { color: var(--orange); }
+  .gauge-val.warn { color: var(--warn); }
+
+  /* PDW Data Readout Card */
+  .pdw-card {
+    background: var(--panel-sub);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    border-radius: 2px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .pdw-item {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dashed rgba(26, 42, 26, 0.4);
+    padding-bottom: 2px;
+  }
+
+  .pdw-key { color: var(--muted); }
+  .pdw-val { color: var(--accent); }
+
+  /* Event Log Stream */
+  .event-stream-container {
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-height: 220px;
+    min-height: 180px;
   }
 
-  .log-header {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    padding: 10px 20px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(0,255,136,0.02);
-  }
-
-  .log-stream {
+  .log-scroll {
     flex: 1;
     overflow-y: auto;
     font-family: var(--mono);
@@ -263,141 +327,185 @@
     padding: 6px 12px;
   }
 
+  .log-scroll::-webkit-scrollbar { width: 3px; }
+  .log-scroll::-webkit-scrollbar-thumb { background: var(--dim); }
+
   .log-row {
-    padding: 4px 6px;
-    border-bottom: 1px solid rgba(26,42,26,0.3);
     display: grid;
-    grid-template-columns: 42px 48px 1fr 48px;
+    grid-template-columns: 46px 54px 1fr 48px;
     gap: 6px;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(26, 42, 26, 0.25);
     align-items: center;
   }
 
-  .log-hit { color: var(--accent); font-weight: 700; }
-  .log-miss { color: var(--muted); }
-  .log-fa { color: var(--warn); font-weight: 700; }
+  .tag-hit { color: var(--accent); font-weight: 700; text-shadow: 0 0 5px var(--accent-glow); }
+  .tag-miss { color: var(--muted); }
+  .tag-fa { color: var(--warn); font-weight: 700; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">DRDO EW // SMART SCAN <span>ELECTRONIC SUPPORT RECEIVER SCHEDULER</span></div>
-  <div class="header-status">
-    <div><span class="ws-dot" id="wsDot"></span><span id="wsStatus">DISCONNECTED</span></div>
-    <div id="hdrStep">STEP: 0</div>
-    <div id="hdrTime">TIME: 0.00s</div>
+  <div class="logo">
+    <span>DRDO EW // C2-ES</span>
+    <span class="badge-tag">SMART SCAN SCHEDULER</span>
+    <span class="badge-tag" style="border-color:var(--cyan); color:var(--cyan);">DEFCON 2</span>
+  </div>
+  <div class="header-telemetry">
+    <div class="status-pill"><span class="dot" id="wsDot"></span><span id="wsStatus">DISCONNECTED</span></div>
+    <div class="status-pill" id="hdrStep">STEP: 0</div>
+    <div class="status-pill" id="hdrTime">TIME: 0.00s</div>
+    <div class="status-pill" style="color:var(--accent);" id="hdrThreat">THREAT: 0 DETECTED</div>
   </div>
 </header>
 
-<div class="main">
-  <!-- Left Screen: Waterfall + Spectrum + Controls -->
-  <div class="left-pane">
-    <div class="control-panel">
-      <div class="control-group">
-        <label>SCHEDULER:</label>
+<div class="main-grid">
+  <!-- Left Column: Visualizers & Interactive Operations -->
+  <div class="left-viewport">
+    <!-- Operator Controls Bar -->
+    <div class="control-bar">
+      <div class="ctrl-group">
+        <label style="color:var(--muted)">POLICY:</label>
         <select id="schedulerSelect" onchange="changeScheduler(this.value)">
-          <option value="ducb" selected>Discounted UCB (Online Bandit)</option>
-          <option value="dqn">Deep Q-Network (Reinforcement Learning)</option>
-          <option value="predictive">Predictive Temporal Interceptor</option>
+          <option value="dqn" selected>Deep Q-Network (Trained RL Policy)</option>
+          <option value="ducb">Discounted UCB (Online MAB)</option>
           <option value="exp3">EXP3 (Adversarial Hopping Bandit)</option>
+          <option value="predictive">Predictive Temporal Interceptor</option>
           <option value="periodic">Prime-Staggered Periodic Interceptor</option>
           <option value="sequential">Uniform Sequential (Open-Loop Baseline)</option>
           <option value="random">Random Sweep (Open-Loop Baseline)</option>
         </select>
       </div>
 
-      <div class="control-group">
+      <div class="ctrl-group">
         <button onclick="toggleSim()" id="btnSim">PAUSE</button>
         <button onclick="resetSim()">RESET</button>
-        <label>SPEED:</label>
-        <input type="range" id="speedSlider" min="20" max="250" value="60" onchange="changeSpeed(this.value)">
+        <button onclick="toggleAudio()" id="btnAudio">AUDIO: OFF</button>
+      </div>
+
+      <div class="ctrl-group">
+        <button class="btn-warn" onclick="injectThreat('agile_surge')">+ SURGE AGILE THREAT</button>
+        <button class="btn-warn" onclick="injectThreat('drone_swarm')">+ DRONE SWARM LINK</button>
+      </div>
+
+      <div class="ctrl-group">
+        <label style="color:var(--muted)">SPEED:</label>
+        <input type="range" id="speedSlider" min="10" max="150" value="50" onchange="changeSpeed(this.value)">
       </div>
     </div>
 
     <!-- 2D Search Waterfall (Frequency Band vs Time) -->
-    <div class="waterfall-panel">
-      <div class="panel-title">
-        <span>2D SEARCH WATERFALL // TIME vs FREQUENCY SPECTRUM (BANDS 0?7)</span>
-        <span id="dwellStatus" style="color:var(--cyan)">TUNED: BAND 0</span>
+    <div class="hud-panel">
+      <div class="panel-hdr">
+        <span>2D SEARCH WATERFALL // FREQUENCY BANDS (0?7) vs TIME HISTORY</span>
+        <span id="dwellStatus" style="color:var(--cyan)">TUNED: BAND 0 | IBW: 100 MHz</span>
       </div>
       <canvas id="waterfallCanvas"></canvas>
-      <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:9px; color:var(--muted); padding-top:4px;">
-        <span>CH 0 [2.0 GHz]</span>
-        <span>CH 1 [2.1 GHz]</span>
-        <span>CH 2 [2.2 GHz] (Surv Radar)</span>
-        <span>CH 3 [2.3 GHz]</span>
-        <span>CH 4 [2.4 GHz]</span>
-        <span>CH 5 [2.5 GHz] (Agile Radar)</span>
-        <span>CH 6 [2.6 GHz]</span>
-        <span>CH 7 [2.7 GHz] (Nav Radar)</span>
+      <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:9px; color:var(--muted); padding-top:2px;">
+        <span>CH 0 [2.0G]</span>
+        <span>CH 1 [2.1G] Drone</span>
+        <span>CH 2 [2.2G] 3D Surv</span>
+        <span>CH 3 [2.3G]</span>
+        <span>CH 4 [2.4G] Agile</span>
+        <span>CH 5 [2.5G] Agile</span>
+        <span>CH 6 [2.6G] Agile</span>
+        <span>CH 7 [2.7G] Nav</span>
       </div>
     </div>
 
-    <!-- Real-time Instantaneous Spectrum -->
-    <div class="waterfall-panel" style="flex:0.6;">
-      <div class="panel-title">
-        <span>INSTANTANEOUS POWER SPECTRUM & SENSITIVITY THRESHOLD (-85 dBm)</span>
-        <span id="pwrReadout">MEASURED: -95.0 dBm</span>
+    <!-- Multi-Channel Instantaneous Power Spectrum -->
+    <div class="hud-panel" style="flex:0.6;">
+      <div class="panel-hdr">
+        <span>INSTANTANEOUS RECEIVED SPECTRUM & SENSITIVITY THRESHOLD (-85 dBm)</span>
+        <span id="pwrReadout">MEASURED: -95.0 dBm (SNR: 0 dB)</span>
       </div>
       <canvas id="spectrumCanvas"></canvas>
     </div>
   </div>
 
-  <!-- Right Sidebar: Figures of Merit & Detection Logs -->
-  <div class="sidebar">
-    <!-- Active Detections Card -->
-    <div class="metric-card" id="statusCard">
-      <div class="metric-label">CURRENT DWELL STATUS</div>
-      <div class="metric-val-large" id="hitStatus">SEARCHING</div>
-      <div style="font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:4px;" id="emitterIdText">NO EMITTER ILLUMINATION</div>
-    </div>
-
-    <!-- DRDO Figures of Merit -->
-    <div class="metric-card">
-      <div class="metric-label">PROBABILITY OF DETECTION (Pd)</div>
-      <div style="display:flex; align-items:baseline; justify-content:space-between;">
-        <span class="metric-val-large" id="valPd">0.0%</span>
-        <span style="font-family:var(--mono); font-size:10px; color:var(--muted);" id="valHits">0 HITS</span>
+  <!-- Right Column: Radar PPI Scope + Figures of Merit + PDW -->
+  <div class="right-viewport">
+    <!-- 360-degree PPI Radar Scope Display -->
+    <div class="sidebar-section">
+      <div class="sec-label">
+        <span>TACTICAL BEARING // 360? PPI SCOPE</span>
+        <span id="targetCount" style="color:var(--accent);">0 TRACKS</span>
       </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="fillPd"></div>
-      </div>
-
-      <div class="metric-grid">
-        <div class="metric-sub">
-          <div class="metric-label">FALSE ALARM (Pfa)</div>
-          <div style="font-family:var(--mono); font-size:16px; color:var(--text);" id="valPfa">0.0000</div>
-        </div>
-        <div class="metric-sub">
-          <div class="metric-label">INTERCEPT RATE</div>
-          <div style="font-family:var(--mono); font-size:16px; color:var(--text);" id="valRate">0.0 /s</div>
-        </div>
-        <div class="metric-sub">
-          <div class="metric-label">PRED TIME ERROR</div>
-          <div style="font-family:var(--mono); font-size:16px; color:var(--cyan);" id="valTimeErr">0.0 ms</div>
-        </div>
-        <div class="metric-sub">
-          <div class="metric-label">CUMULATIVE REWARD</div>
-          <div style="font-family:var(--mono); font-size:16px; color:var(--accent);" id="valReward">0.0</div>
-        </div>
+      <div class="radar-container">
+        <canvas id="radarCanvas" width="220" height="220"></canvas>
       </div>
     </div>
 
-    <!-- Live Interception Log -->
-    <div class="log-section">
-      <div class="log-header">INTERCEPTION EVENT STREAM</div>
-      <div class="log-stream" id="logStream"></div>
+    <!-- DRDO Figures of Merit Gauges -->
+    <div class="sidebar-section">
+      <div class="sec-label">
+        <span>DRDO PERFORMANCE FIGURES OF MERIT</span>
+        <span id="modelTag" style="color:var(--cyan)">DQN ACTIVE</span>
+      </div>
+
+      <div class="gauge-row">
+        <div class="gauge-card">
+          <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">PROB. DETECTION (Pd)</div>
+          <div class="gauge-val" id="valPd">100.0%</div>
+          <div style="font-family:var(--mono); font-size:9px; color:var(--muted);" id="valHits">0 HITS</div>
+        </div>
+        <div class="gauge-card">
+          <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">FALSE ALARM (Pfa)</div>
+          <div class="gauge-val warn" id="valPfa">0.0000</div>
+          <div style="font-family:var(--mono); font-size:9px; color:var(--muted);">NOISE REJECTION</div>
+        </div>
+        <div class="gauge-card">
+          <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">INTERCEPT RATE</div>
+          <div class="gauge-val cyan" id="valRate">0.0 /s</div>
+          <div style="font-family:var(--mono); font-size:9px; color:var(--muted);">PULSE CAPTURES</div>
+        </div>
+        <div class="gauge-card">
+          <div style="font-family:var(--mono); font-size:10px; color:var(--muted);">TIME ERROR (?t)</div>
+          <div class="gauge-val orange" id="valTimeErr">0.0 ms</div>
+          <div style="font-family:var(--mono); font-size:9px; color:var(--muted);">PRED LOOKAHEAD</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Decoded Pulse Descriptor Word (PDW) HUD -->
+    <div class="sidebar-section">
+      <div class="sec-label">
+        <span>INTERCEPTED PULSE DESCRIPTOR (PDW)</span>
+        <span id="pdwStatus" style="color:var(--accent);">STANDBY</span>
+      </div>
+      <div class="pdw-card" id="pdwBox">
+        <div class="pdw-item"><span class="pdw-key">EMITTER:</span><span class="pdw-val" id="pdwEmitter">NONE</span></div>
+        <div class="pdw-item"><span class="pdw-key">CARRIER:</span><span class="pdw-val" id="pdwFreq">2.0 GHz</span></div>
+        <div class="pdw-item"><span class="pdw-key">THREAT:</span><span class="pdw-val" id="pdwThreat">0 / 5</span></div>
+        <div class="pdw-item"><span class="pdw-key">PULSE WIDTH:</span><span class="pdw-val" id="pdwPw">-- ?s</span></div>
+        <div class="pdw-item"><span class="pdw-key">PRI:</span><span class="pdw-val" id="pdwPri">-- ms</span></div>
+        <div class="pdw-item"><span class="pdw-key">SNR:</span><span class="pdw-val" id="pdwSnr">0 dB</span></div>
+      </div>
+    </div>
+
+    <!-- Real-time Interception Event Stream -->
+    <div class="event-stream-container">
+      <div style="padding:8px 16px; font-family:var(--mono); font-size:10px; color:var(--muted); border-bottom:1px solid var(--border); background:rgba(0,255,136,0.02);">
+        INTERCEPTION EVENT STREAM
+      </div>
+      <div class="log-scroll" id="logStream"></div>
     </div>
   </div>
 </div>
 
 <script>
 const NUM_BANDS = 8;
-const WF_ROWS = 45;
+const WF_ROWS = 48;
 let wfHistory = [];
 let ws = null;
 let isPaused = false;
+let audioEnabled = false;
+let audioCtx = null;
+let radarAngle = 0;
+let activeRadarTargets = [];
 
-// Initialize empty waterfall buffer
+// Initialize waterfall history
 for (let r = 0; r < WF_ROWS; r++) {
   wfHistory.push({
     groundTruth: new Array(NUM_BANDS).fill(false),
@@ -405,6 +513,37 @@ for (let r = 0; r < WF_ROWS; r++) {
     hit: false,
     falseAlarm: false
   });
+}
+
+// Tactical Audio Synthesizer (Web Audio API)
+function playRadarChirp(frequency, duration = 0.04) {
+  if (!audioEnabled) return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(frequency * 1.5, audioCtx.currentTime + duration);
+
+    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch (e) {}
+}
+
+function toggleAudio() {
+  audioEnabled = !audioEnabled;
+  const btn = document.getElementById('btnAudio');
+  btn.textContent = audioEnabled ? 'AUDIO: ON' : 'AUDIO: OFF';
+  btn.style.borderColor = audioEnabled ? 'var(--accent)' : 'var(--dim)';
+  if (audioEnabled) playRadarChirp(800, 0.05);
 }
 
 function connectWS() {
@@ -422,53 +561,55 @@ function connectWS() {
     setTimeout(connectWS, 1500);
   };
 
-  ws.onmessage = (event) => {
+  ws.onmessage = (e) => {
     try {
-      const data = JSON.parse(event.data);
-      handleTelemetry(data);
-    } catch (e) {
-      console.error("Telemetry error", e);
-    }
+      const d = JSON.parse(e.data);
+      handleTelemetry(d);
+    } catch (err) {}
   };
 }
 
 function handleTelemetry(d) {
-  // Update header counters
   document.getElementById('hdrStep').textContent = 'STEP: ' + d.step;
   document.getElementById('hdrTime').textContent = 'TIME: ' + d.time_sec.toFixed(2) + 's';
-  document.getElementById('dwellStatus').textContent = 'TUNED: CH ' + d.action_band + ' | IBW: 100 MHz';
+  document.getElementById('dwellStatus').textContent = 'TUNED: BAND ' + d.action_band + ' | IBW: 100 MHz';
   document.getElementById('pwrReadout').textContent = 'MEASURED: ' + d.rx_power_dbm + ' dBm (SNR: ' + d.snr_db + ' dB)';
-
-  // Status card
-  const statusEl = document.getElementById('hitStatus');
-  const emitterEl = document.getElementById('emitterIdText');
-  if (d.hit && !d.false_alarm) {
-    statusEl.textContent = '? INTERCEPT!';
-    statusEl.className = 'metric-val-large';
-    emitterEl.textContent = (d.emitter_id || 'UNKNOWN RADAR') + ' [THREAT LEVEL: ' + d.threat_level + '/5]';
-  } else if (d.false_alarm) {
-    statusEl.textContent = '? FALSE ALARM';
-    statusEl.className = 'metric-val-large warn';
-    emitterEl.textContent = 'NOISE FLUCTUATION EXCEEDED SENSITIVITY';
-  } else {
-    statusEl.textContent = 'SEARCHING...';
-    statusEl.className = 'metric-val-large';
-    statusEl.style.color = 'var(--muted)';
-    emitterEl.textContent = 'NO EMITTER ON CURRENT CHANNEL';
-  }
+  document.getElementById('modelTag').textContent = (d.scheduler_key || 'DQN').toUpperCase() + ' ACTIVE';
 
   // Figures of merit
   const fom = d.fom || {};
-  const pd = fom.pd_pct || 0.0;
-  document.getElementById('valPd').textContent = pd.toFixed(1) + '%';
-  document.getElementById('fillPd').style.width = Math.min(100, pd) + '%';
+  document.getElementById('valPd').textContent = (fom.pd_pct || 100.0).toFixed(1) + '%';
   document.getElementById('valHits').textContent = (fom.total_hits || 0) + ' HITS';
   document.getElementById('valPfa').textContent = (fom.pfa || 0.0).toFixed(4);
   document.getElementById('valRate').textContent = (fom.intercept_rate || 0.0).toFixed(1) + ' /s';
   document.getElementById('valTimeErr').textContent = (fom.time_error_ms || 0.0).toFixed(1) + ' ms';
-  document.getElementById('valReward').textContent = d.cumulative_reward.toFixed(1);
 
-  // Update waterfall history
+  // Targets and PPI scope
+  activeRadarTargets = d.active_emitters || [];
+  document.getElementById('targetCount').textContent = activeRadarTargets.length + ' TARGETS';
+  document.getElementById('hdrThreat').textContent = 'THREAT: ' + activeRadarTargets.length + ' DETECTED';
+
+  // Sound effect on hit
+  if (d.hit && !d.false_alarm) {
+    playRadarChirp(1200 + d.action_band * 120, 0.03);
+  }
+
+  // Update PDW Decoder card
+  if (d.pdw) {
+    document.getElementById('pdwStatus').textContent = 'INTERCEPTED';
+    document.getElementById('pdwStatus').style.color = 'var(--accent)';
+    document.getElementById('pdwEmitter').textContent = d.emitter_id || 'UNKNOWN';
+    document.getElementById('pdwFreq').textContent = (2000 + d.action_band * 100) + ' MHz';
+    document.getElementById('pdwThreat').textContent = (d.threat_level || 1) + ' / 5';
+    document.getElementById('pdwPw').textContent = ((d.pdw.pw_sec || 0) * 1e6).toFixed(1) + ' ?s';
+    document.getElementById('pdwPri').textContent = ((d.pdw.pri_sec || 0) * 1e3).toFixed(2) + ' ms';
+    document.getElementById('pdwSnr').textContent = d.snr_db.toFixed(1) + ' dB';
+  } else if (d.false_alarm) {
+    document.getElementById('pdwStatus').textContent = 'FALSE ALARM';
+    document.getElementById('pdwStatus').style.color = 'var(--warn)';
+  }
+
+  // Waterfall update
   const gtRow = new Array(NUM_BANDS).fill(false);
   if (d.ground_truth_bands) {
     d.ground_truth_bands.forEach(b => { if (b < NUM_BANDS) gtRow[b] = true; });
@@ -485,19 +626,19 @@ function handleTelemetry(d) {
   drawWaterfall();
   drawSpectrum(d.all_bands_powers, d.action_band);
 
-  // Append to log stream if event occurs
-  if (d.hit || d.step % 15 === 0) {
+  if (d.hit || d.step % 12 === 0) {
     appendLogRow(d);
   }
 }
 
+// ?? Render 2D Waterfall ??????????????????????????????????????????????????
 function drawWaterfall() {
   const canvas = document.getElementById('waterfallCanvas');
   const ctx = canvas.getContext('2d');
   const W = canvas.width = canvas.offsetWidth;
   const H = canvas.height = canvas.offsetHeight;
 
-  ctx.fillStyle = '#050a0d';
+  ctx.fillStyle = '#04070a';
   ctx.fillRect(0, 0, W, H);
 
   const colW = W / NUM_BANDS;
@@ -510,29 +651,29 @@ function drawWaterfall() {
     for (let c = 0; c < NUM_BANDS; c++) {
       const x = c * colW;
 
-      // Draw background channel slot
-      ctx.fillStyle = (c % 2 === 0) ? '#070f14' : '#0a141a';
+      // Channel background
+      ctx.fillStyle = (c % 2 === 0) ? '#060c12' : '#081018';
       ctx.fillRect(x, y, colW - 1, rowH - 1);
 
-      // Draw ground truth transmission
+      // Ground truth signal (amber glow)
       if (item.groundTruth[c]) {
-        ctx.fillStyle = '#ff7b00';
+        ctx.fillStyle = '#ff9500';
         ctx.fillRect(x, y, colW - 1, rowH - 1);
       }
 
-      // Draw receiver dwell position
+      // Receiver Dwell Highlight
       if (item.actionBand === c) {
         if (item.hit) {
-          // Bright green glowing hit
+          // Tactical intercept hit: glowing green
           ctx.fillStyle = '#00ff88';
           ctx.fillRect(x, y, colW - 1, rowH - 1);
         } else if (item.falseAlarm) {
-          ctx.fillStyle = '#ff4444';
+          ctx.fillStyle = '#ff3b30';
           ctx.fillRect(x, y, colW - 1, rowH - 1);
         } else {
-          // Tuned but silent dwell (cyan border)
+          // Receiver dwell border cursor
           ctx.strokeStyle = '#00e5ff';
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 1.8;
           ctx.strokeRect(x + 1, y + 1, colW - 3, rowH - 3);
         }
       }
@@ -540,13 +681,14 @@ function drawWaterfall() {
   }
 }
 
+// ?? Render Spectrum Analyzer ?????????????????????????????????????????????
 function drawSpectrum(powers, activeBand) {
   const canvas = document.getElementById('spectrumCanvas');
   const ctx = canvas.getContext('2d');
   const W = canvas.width = canvas.offsetWidth;
   const H = canvas.height = canvas.offsetHeight;
 
-  ctx.fillStyle = '#070f14';
+  ctx.fillStyle = '#04070a';
   ctx.fillRect(0, 0, W, H);
 
   if (!powers || !powers.length) return;
@@ -555,9 +697,9 @@ function drawSpectrum(powers, activeBand) {
   const minPwr = -105.0;
   const maxPwr = -30.0;
 
-  // Sensitivity line (-85 dBm)
+  // Sensitivity Threshold (-85 dBm)
   const threshY = H - ((-85.0 - minPwr) / (maxPwr - minPwr)) * H;
-  ctx.strokeStyle = 'rgba(255,68,68,0.5)';
+  ctx.strokeStyle = 'rgba(255, 59, 48, 0.6)';
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
   ctx.moveTo(0, threshY);
@@ -565,38 +707,131 @@ function drawSpectrum(powers, activeBand) {
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Draw power bars
+  // Power Bars
   for (let b = 0; b < NUM_BANDS; b++) {
     const pwr = powers[b] || minPwr;
     const norm = Math.max(0, Math.min(1, (pwr - minPwr) / (maxPwr - minPwr)));
     const barH = norm * H;
-    const x = b * colW + 4;
+    const x = b * colW + 6;
     const y = H - barH;
 
     if (b === activeBand) {
-      ctx.fillStyle = '#00e5ff';
+      // Active tuned band: Cyan gradient
+      const grad = ctx.createLinearGradient(0, y, 0, H);
+      grad.addColorStop(0, '#00e5ff');
+      grad.addColorStop(1, '#005577');
+      ctx.fillStyle = grad;
     } else if (pwr >= -85.0) {
+      // Hostile signal above threshold: Amber/Orange
       ctx.fillStyle = '#ff9500';
     } else {
-      ctx.fillStyle = '#1a3a2a';
+      ctx.fillStyle = '#102518';
     }
 
-    ctx.fillRect(x, y, colW - 8, barH);
+    ctx.fillRect(x, y, colW - 12, barH);
   }
 }
 
+// ?? Render 360-degree PPI Radar Scope ????????????????????????????????????
+function drawRadarScope() {
+  const canvas = document.getElementById('radarCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width;
+  const H = canvas.height;
+  const cx = W / 2;
+  const cy = H / 2;
+  const radius = cx - 10;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Phosphor Scope Background
+  ctx.fillStyle = '#030806';
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+  ctx.fill();
+
+  // Range rings
+  ctx.strokeStyle = 'rgba(0, 255, 136, 0.15)';
+  ctx.lineWidth = 1;
+  for (let r = 1; r <= 3; r++) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, (radius / 3) * r, 0, 2 * Math.PI);
+    ctx.stroke();
+  }
+
+  // Crosshairs & Bearing ticks
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - radius); ctx.lineTo(cx, cy + radius);
+  ctx.moveTo(cx - radius, cy); ctx.lineTo(cx + radius, cy);
+  ctx.stroke();
+
+  // Bearing text
+  ctx.fillStyle = 'rgba(0, 255, 136, 0.4)';
+  ctx.font = '8px "Share Tech Mono"';
+  ctx.fillText('000?', cx - 8, cy - radius + 12);
+  ctx.fillText('090?', cx + radius - 24, cy + 3);
+  ctx.fillText('180?', cx - 8, cy + radius - 4);
+  ctx.fillText('270?', cx - radius + 4, cy + 3);
+
+  // Rotating Radar Sweep Line
+  radarAngle = (radarAngle + 0.04) % (2 * Math.PI);
+  ctx.strokeStyle = 'rgba(0, 255, 136, 0.8)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + radius * Math.cos(radarAngle), cy + radius * Math.sin(radarAngle));
+  ctx.stroke();
+
+  // Sweep Glow Trail
+  const sweepGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+  sweepGrad.addColorStop(0, 'rgba(0, 255, 136, 0.05)');
+  sweepGrad.addColorStop(1, 'rgba(0, 255, 136, 0.0)');
+  ctx.fillStyle = sweepGrad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, radarAngle - 0.5, radarAngle);
+  ctx.lineTo(cx, cy);
+  ctx.fill();
+
+  // Draw active emitter blips
+  for (let tgt of activeRadarTargets) {
+    const rad = (tgt.aoa_deg - 90) * (Math.PI / 180.0);
+    const dist = radius * (0.45 + (tgt.band / NUM_BANDS) * 0.45);
+    const tx = cx + dist * Math.cos(rad);
+    const ty = cy + dist * Math.sin(rad);
+
+    ctx.fillStyle = tgt.threat >= 4 ? '#ff3b30' : '#ff9500';
+    ctx.beginPath();
+    ctx.arc(tx, ty, 4, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Blip pulse ring
+    ctx.strokeStyle = tgt.threat >= 4 ? 'rgba(255, 59, 48, 0.4)' : 'rgba(255, 149, 0, 0.4)';
+    ctx.beginPath();
+    ctx.arc(tx, ty, 8, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    ctx.fillStyle = '#d0e2d5';
+    ctx.font = '8px "Share Tech Mono"';
+    ctx.fillText('CH' + tgt.band, tx + 6, ty + 3);
+  }
+
+  requestAnimationFrame(drawRadarScope);
+}
+
+// ?? Append to Event Log Stream ???????????????????????????????????????????
 function appendLogRow(d) {
   const stream = document.getElementById('logStream');
   const row = document.createElement('div');
   row.className = 'log-row';
 
-  let statusClass = 'log-miss';
+  let statusClass = 'tag-miss';
   let statusText = 'MISS';
   if (d.hit && !d.false_alarm) {
-    statusClass = 'log-hit';
+    statusClass = 'tag-hit';
     statusText = 'INTERCEPT';
   } else if (d.false_alarm) {
-    statusClass = 'log-fa';
+    statusClass = 'tag-fa';
     statusText = 'FALSE_ALARM';
   }
 
@@ -608,9 +843,10 @@ function appendLogRow(d) {
   `;
 
   stream.insertBefore(row, stream.firstChild);
-  if (stream.children.length > 50) stream.removeChild(stream.lastChild);
+  if (stream.children.length > 40) stream.removeChild(stream.lastChild);
 }
 
+// ?? Control Handlers ?????????????????????????????????????????????????????
 function changeScheduler(key) {
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify({ command: 'set_scheduler', scheduler: key }));
@@ -618,7 +854,7 @@ function changeScheduler(key) {
 }
 
 function changeSpeed(val) {
-  const delay = (270 - parseInt(val)) / 1000.0;
+  const delay = (160 - parseInt(val)) / 1000.0;
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify({ command: 'set_speed', delay: delay }));
   }
@@ -640,8 +876,16 @@ function resetSim() {
   document.getElementById('logStream').innerHTML = '';
 }
 
+function injectThreat(threatType) {
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ command: 'inject_threat', threat_type: threatType }));
+    playRadarChirp(400, 0.08);
+  }
+}
+
 window.addEventListener('load', () => {
   connectWS();
+  requestAnimationFrame(drawRadarScope);
 });
 </script>
 </body>
