@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRDO EW ? Smart Scan Receiver Scheduler</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap');
+
+  :root {
+    --bg:        #080c0f;
+    --panel:     #0c1318;
+    --panel-sub: #111a22;
+    --border:    #1a2a1a;
+    --border-hl: #00ff8844;
+    --accent:    #00ff88;
+    --cyan:      #00e5ff;
+    --dim:       #1e3a2a;
+    --text:      #c8d8c8;
+    --muted:     #4a6a4a;
+    --warn:      #ff4444;
+    --orange:    #ff9500;
+    --mono:      'Share Tech Mono', monospace;
+    --sans:      'Rajdhani', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scan-line background */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,255,136,0.015) 2px,
+      rgba(0,255,136,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+  }
+
+  .logo {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    font-weight: 700;
+  }
+
+  .logo span {
+    color: var(--muted);
+    font-size: 11px;
+    margin-left: 12px;
+    letter-spacing: 2px;
+  }
+
+  .header-status {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .ws-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--warn);
+    display: inline-block;
+    margin-right: 6px;
+    transition: background 0.3s;
+  }
+  .ws-dot.connected { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+
+  /* Main Grid Layout */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 0;
+    height: calc(100vh - 53px);
+  }
+
+  .left-pane {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+    overflow-y: auto;
+  }
+
+  .control-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    border-radius: 2px;
+  }
+
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  select, button, input[type=range] {
+    background: var(--panel-sub);
+    border: 1px solid var(--dim);
+    color: var(--accent);
+    font-family: var(--mono);
+    padding: 6px 12px;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: var(--dim);
+    border-color: var(--accent);
+  }
+
+  .waterfall-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .panel-title {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    image-rendering: pixelated;
+    background: #04080a;
+    border: 1px solid rgba(0,255,136,0.1);
+  }
+
+  #waterfallCanvas {
+    height: 280px;
+  }
+
+  #spectrumCanvas {
+    height: 90px;
+  }
+
+  /* Right Sidebar */
+  .sidebar {
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .metric-card {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .metric-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  .metric-val-large {
+    font-family: var(--mono);
+    font-size: 28px;
+    color: var(--accent);
+  }
+
+  .metric-val-large.warn { color: var(--warn); }
+  .metric-val-large.orange { color: var(--orange); }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .metric-sub {
+    background: var(--panel-sub);
+    padding: 8px 10px;
+    border: 1px solid rgba(26,42,26,0.4);
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: var(--dim);
+    margin-top: 6px;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.2s;
+  }
+
+  .log-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 220px;
+  }
+
+  .log-header {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,255,136,0.02);
+  }
+
+  .log-stream {
+    flex: 1;
+    overflow-y: auto;
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 6px 12px;
+  }
+
+  .log-row {
+    padding: 4px 6px;
+    border-bottom: 1px solid rgba(26,42,26,0.3);
+    display: grid;
+    grid-template-columns: 42px 48px 1fr 48px;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .log-hit { color: var(--accent); font-weight: 700; }
+  .log-miss { color: var(--muted); }
+  .log-fa { color: var(--warn); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">DRDO EW // SMART SCAN <span>ELECTRONIC SUPPORT RECEIVER SCHEDULER</span></div>
+  <div class="header-status">
+    <div><span class="ws-dot" id="wsDot"></span><span id="wsStatus">DISCONNECTED</span></div>
+    <div id="hdrStep">STEP: 0</div>
+    <div id="hdrTime">TIME: 0.00s</div>
+  </div>
+</header>
+
+<div class="main">
+  <!-- Left Screen: Waterfall + Spectrum + Controls -->
+  <div class="left-pane">
+    <div class="control-panel">
+      <div class="control-group">
+        <label>SCHEDULER:</label>
+        <select id="schedulerSelect" onchange="changeScheduler(this.value)">
+          <option value="ducb" selected>Discounted UCB (Online Bandit)</option>
+          <option value="dqn">Deep Q-Network (Reinforcement Learning)</option>
+          <option value="predictive">Predictive Temporal Interceptor</option>
+          <option value="exp3">EXP3 (Adversarial Hopping Bandit)</option>
+          <option value="periodic">Prime-Staggered Periodic Interceptor</option>
+          <option value="sequential">Uniform Sequential (Open-Loop Baseline)</option>
+          <option value="random">Random Sweep (Open-Loop Baseline)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <button onclick="toggleSim()" id="btnSim">PAUSE</button>
+        <button onclick="resetSim()">RESET</button>
+        <label>SPEED:</label>
+        <input type="range" id="speedSlider" min="20" max="250" value="60" onchange="changeSpeed(this.value)">
+      </div>
+    </div>
+
+    <!-- 2D Search Waterfall (Frequency Band vs Time) -->
+    <div class="waterfall-panel">
+      <div class="panel-title">
+        <span>2D SEARCH WATERFALL // TIME vs FREQUENCY SPECTRUM (BANDS 0?7)</span>
+        <span id="dwellStatus" style="color:var(--cyan)">TUNED: BAND 0</span>
+      </div>
+      <canvas id="waterfallCanvas"></canvas>
+      <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:9px; color:var(--muted); padding-top:4px;">
+        <span>CH 0 [2.0 GHz]</span>
+        <span>CH 1 [2.1 GHz]</span>
+        <span>CH 2 [2.2 GHz] (Surv Radar)</span>
+        <span>CH 3 [2.3 GHz]</span>
+        <span>CH 4 [2.4 GHz]</span>
+        <span>CH 5 [2.5 GHz] (Agile Radar)</span>
+        <span>CH 6 [2.6 GHz]</span>
+        <span>CH 7 [2.7 GHz] (Nav Radar)</span>
+      </div>
+    </div>
+
+    <!-- Real-time Instantaneous Spectrum -->
+    <div class="waterfall-panel" style="flex:0.6;">
+      <div class="panel-title">
+        <span>INSTANTANEOUS POWER SPECTRUM & SENSITIVITY THRESHOLD (-85 dBm)</span>
+        <span id="pwrReadout">MEASURED: -95.0 dBm</span>
+      </div>
+      <canvas id="spectrumCanvas"></canvas>
+    </div>
+  </div>
+
+  <!-- Right Sidebar: Figures of Merit & Detection Logs -->
+  <div class="sidebar">
+    <!-- Active Detections Card -->
+    <div class="metric-card" id="statusCard">
+      <div class="metric-label">CURRENT DWELL STATUS</div>
+      <div class="metric-val-large" id="hitStatus">SEARCHING</div>
+      <div style="font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:4px;" id="emitterIdText">NO EMITTER ILLUMINATION</div>
+    </div>
+
+    <!-- DRDO Figures of Merit -->
+    <div class="metric-card">
+      <div class="metric-label">PROBABILITY OF DETECTION (Pd)</div>
+      <div style="display:flex; align-items:baseline; justify-content:space-between;">
+        <span class="metric-val-large" id="valPd">0.0%</span>
+        <span style="font-family:var(--mono); font-size:10px; color:var(--muted);" id="valHits">0 HITS</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="fillPd"></div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-sub">
+          <div class="metric-label">FALSE ALARM (Pfa)</div>
+          <div style="font-family:var(--mono); font-size:16px; color:var(--text);" id="valPfa">0.0000</div>
+        </div>
+        <div class="metric-sub">
+          <div class="metric-label">INTERCEPT RATE</div>
+          <div style="font-family:var(--mono); font-size:16px; color:var(--text);" id="valRate">0.0 /s</div>
+        </div>
+        <div class="metric-sub">
+          <div class="metric-label">PRED TIME ERROR</div>
+          <div style="font-family:var(--mono); font-size:16px; color:var(--cyan);" id="valTimeErr">0.0 ms</div>
+        </div>
+        <div class="metric-sub">
+          <div class="metric-label">CUMULATIVE REWARD</div>
+          <div style="font-family:var(--mono); font-size:16px; color:var(--accent);" id="valReward">0.0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Interception Log -->
+    <div class="log-section">
+      <div class="log-header">INTERCEPTION EVENT STREAM</div>
+      <div class="log-stream" id="logStream"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const NUM_BANDS = 8;
+const WF_ROWS = 45;
+let wfHistory = [];
+let ws = null;
+let isPaused = false;
+
+// Initialize empty waterfall buffer
+for (let r = 0; r < WF_ROWS; r++) {
+  wfHistory.push({
+    groundTruth: new Array(NUM_BANDS).fill(false),
+    actionBand: -1,
+    hit: false,
+    falseAlarm: false
+  });
+}
+
+function connectWS() {
+  const host = window.location.hostname || 'localhost';
+  ws = new WebSocket('ws://' + host + ':8765');
+
+  ws.onopen = () => {
+    document.getElementById('wsDot').classList.add('connected');
+    document.getElementById('wsStatus').textContent = 'ONLINE // TELEMETRY LINK';
+  };
+
+  ws.onclose = () => {
+    document.getElementById('wsDot').classList.remove('connected');
+    document.getElementById('wsStatus').textContent = 'OFFLINE // RECONNECTING...';
+    setTimeout(connectWS, 1500);
+  };
+
+  ws.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      handleTelemetry(data);
+    } catch (e) {
+      console.error("Telemetry error", e);
+    }
+  };
+}
+
+function handleTelemetry(d) {
+  // Update header counters
+  document.getElementById('hdrStep').textContent = 'STEP: ' + d.step;
+  document.getElementById('hdrTime').textContent = 'TIME: ' + d.time_sec.toFixed(2) + 's';
+  document.getElementById('dwellStatus').textContent = 'TUNED: CH ' + d.action_band + ' | IBW: 100 MHz';
+  document.getElementById('pwrReadout').textContent = 'MEASURED: ' + d.rx_power_dbm + ' dBm (SNR: ' + d.snr_db + ' dB)';
+
+  // Status card
+  const statusEl = document.getElementById('hitStatus');
+  const emitterEl = document.getElementById('emitterIdText');
+  if (d.hit && !d.false_alarm) {
+    statusEl.textContent = '? INTERCEPT!';
+    statusEl.className = 'metric-val-large';
+    emitterEl.textContent = (d.emitter_id || 'UNKNOWN RADAR') + ' [THREAT LEVEL: ' + d.threat_level + '/5]';
+  } else if (d.false_alarm) {
+    statusEl.textContent = '? FALSE ALARM';
+    statusEl.className = 'metric-val-large warn';
+    emitterEl.textContent = 'NOISE FLUCTUATION EXCEEDED SENSITIVITY';
+  } else {
+    statusEl.textContent = 'SEARCHING...';
+    statusEl.className = 'metric-val-large';
+    statusEl.style.color = 'var(--muted)';
+    emitterEl.textContent = 'NO EMITTER ON CURRENT CHANNEL';
+  }
+
+  // Figures of merit
+  const fom = d.fom || {};
+  const pd = fom.pd_pct || 0.0;
+  document.getElementById('valPd').textContent = pd.toFixed(1) + '%';
+  document.getElementById('fillPd').style.width = Math.min(100, pd) + '%';
+  document.getElementById('valHits').textContent = (fom.total_hits || 0) + ' HITS';
+  document.getElementById('valPfa').textContent = (fom.pfa || 0.0).toFixed(4);
+  document.getElementById('valRate').textContent = (fom.intercept_rate || 0.0).toFixed(1) + ' /s';
+  document.getElementById('valTimeErr').textContent = (fom.time_error_ms || 0.0).toFixed(1) + ' ms';
+  document.getElementById('valReward').textContent = d.cumulative_reward.toFixed(1);
+
+  // Update waterfall history
+  const gtRow = new Array(NUM_BANDS).fill(false);
+  if (d.ground_truth_bands) {
+    d.ground_truth_bands.forEach(b => { if (b < NUM_BANDS) gtRow[b] = true; });
+  }
+
+  wfHistory.push({
+    groundTruth: gtRow,
+    actionBand: d.action_band,
+    hit: d.hit && !d.false_alarm,
+    falseAlarm: d.false_alarm
+  });
+  if (wfHistory.length > WF_ROWS) wfHistory.shift();
+
+  drawWaterfall();
+  drawSpectrum(d.all_bands_powers, d.action_band);
+
+  // Append to log stream if event occurs
+  if (d.hit || d.step % 15 === 0) {
+    appendLogRow(d);
+  }
+}
+
+function drawWaterfall() {
+  const canvas = document.getElementById('waterfallCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width = canvas.offsetWidth;
+  const H = canvas.height = canvas.offsetHeight;
+
+  ctx.fillStyle = '#050a0d';
+  ctx.fillRect(0, 0, W, H);
+
+  const colW = W / NUM_BANDS;
+  const rowH = H / WF_ROWS;
+
+  for (let r = 0; r < wfHistory.length; r++) {
+    const item = wfHistory[r];
+    const y = r * rowH;
+
+    for (let c = 0; c < NUM_BANDS; c++) {
+      const x = c * colW;
+
+      // Draw background channel slot
+      ctx.fillStyle = (c % 2 === 0) ? '#070f14' : '#0a141a';
+      ctx.fillRect(x, y, colW - 1, rowH - 1);
+
+      // Draw ground truth transmission
+      if (item.groundTruth[c]) {
+        ctx.fillStyle = '#ff7b00';
+        ctx.fillRect(x, y, colW - 1, rowH - 1);
+      }
+
+      // Draw receiver dwell position
+      if (item.actionBand === c) {
+        if (item.hit) {
+          // Bright green glowing hit
+          ctx.fillStyle = '#00ff88';
+          ctx.fillRect(x, y, colW - 1, rowH - 1);
+        } else if (item.falseAlarm) {
+          ctx.fillStyle = '#ff4444';
+          ctx.fillRect(x, y, colW - 1, rowH - 1);
+        } else {
+          // Tuned but silent dwell (cyan border)
+          ctx.strokeStyle = '#00e5ff';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(x + 1, y + 1, colW - 3, rowH - 3);
+        }
+      }
+    }
+  }
+}
+
+function drawSpectrum(powers, activeBand) {
+  const canvas = document.getElementById('spectrumCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width = canvas.offsetWidth;
+  const H = canvas.height = canvas.offsetHeight;
+
+  ctx.fillStyle = '#070f14';
+  ctx.fillRect(0, 0, W, H);
+
+  if (!powers || !powers.length) return;
+
+  const colW = W / NUM_BANDS;
+  const minPwr = -105.0;
+  const maxPwr = -30.0;
+
+  // Sensitivity line (-85 dBm)
+  const threshY = H - ((-85.0 - minPwr) / (maxPwr - minPwr)) * H;
+  ctx.strokeStyle = 'rgba(255,68,68,0.5)';
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(0, threshY);
+  ctx.lineTo(W, threshY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw power bars
+  for (let b = 0; b < NUM_BANDS; b++) {
+    const pwr = powers[b] || minPwr;
+    const norm = Math.max(0, Math.min(1, (pwr - minPwr) / (maxPwr - minPwr)));
+    const barH = norm * H;
+    const x = b * colW + 4;
+    const y = H - barH;
+
+    if (b === activeBand) {
+      ctx.fillStyle = '#00e5ff';
+    } else if (pwr >= -85.0) {
+      ctx.fillStyle = '#ff9500';
+    } else {
+      ctx.fillStyle = '#1a3a2a';
+    }
+
+    ctx.fillRect(x, y, colW - 8, barH);
+  }
+}
+
+function appendLogRow(d) {
+  const stream = document.getElementById('logStream');
+  const row = document.createElement('div');
+  row.className = 'log-row';
+
+  let statusClass = 'log-miss';
+  let statusText = 'MISS';
+  if (d.hit && !d.false_alarm) {
+    statusClass = 'log-hit';
+    statusText = 'INTERCEPT';
+  } else if (d.false_alarm) {
+    statusClass = 'log-fa';
+    statusText = 'FALSE_ALARM';
+  }
+
+  row.innerHTML = `
+    <span style="color:var(--muted)">#${d.step}</span>
+    <span style="color:var(--cyan)">CH ${d.action_band}</span>
+    <span class="${statusClass}">${statusText}</span>
+    <span style="color:var(--text);text-align:right;">${d.snr_db}dB</span>
+  `;
+
+  stream.insertBefore(row, stream.firstChild);
+  if (stream.children.length > 50) stream.removeChild(stream.lastChild);
+}
+
+function changeScheduler(key) {
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ command: 'set_scheduler', scheduler: key }));
+  }
+}
+
+function changeSpeed(val) {
+  const delay = (270 - parseInt(val)) / 1000.0;
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ command: 'set_speed', delay: delay }));
+  }
+}
+
+function toggleSim() {
+  isPaused = !isPaused;
+  const btn = document.getElementById('btnSim');
+  btn.textContent = isPaused ? 'RESUME' : 'PAUSE';
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ command: isPaused ? 'pause' : 'resume' }));
+  }
+}
+
+function resetSim() {
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ command: 'reset' }));
+  }
+  document.getElementById('logStream').innerHTML = '';
+}
+
+window.addEventListener('load', () => {
+  connectWS();
+});
+</script>
+</body>
+</html>

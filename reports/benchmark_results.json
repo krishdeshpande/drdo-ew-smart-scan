@@ -1,0 +1,266 @@
+[
+  {
+    "scheduler_name": "Uniform Sequential (Open-Loop)",
+    "total_dwells": 500,
+    "total_simulation_time_sec": 12.475,
+    "total_hits": 214,
+    "total_false_alarms": 0,
+    "dwell_switches": 499,
+    "total_reward": 5347.0,
+    "avg_reward_per_dwell": 10.694,
+    "avg_intercept_rate_per_sec": 17.15,
+    "probability_of_detection_pd": 1.0,
+    "probability_of_false_alarm_pfa": 0.0,
+    "receiver_sensitivity_dbm": -85.0,
+    "percentage_correct_predictions": 0.0,
+    "avg_intercept_time_error_ms": 0.0,
+    "time_to_first_intercept_sec": {
+      "RADAR_SURV_01": 0.05,
+      "RADAR_AGILE_02": 0.1,
+      "RADAR_NAV_04": 0.175,
+      "DRONE_UPLINK_03": 0.825
+    },
+    "interception_ratio_by_emitter": {
+      "RADAR_SURV_01": 0.126,
+      "RADAR_AGILE_02": 0.1244,
+      "RADAR_NAV_04": 0.124,
+      "DRONE_UPLINK_03": 0.1491
+    },
+    "interception_ratio_by_type": {
+      "SPATIAL_SCAN_RADAR": 0.125,
+      "FREQUENCY_AGILE": 0.1244,
+      "BURST_COMM": 0.1491
+    }
+  },
+  {
+    "scheduler_name": "Random Sweep (Open-Loop)",
+    "total_dwells": 500,
+    "total_simulation_time_sec": 12.475,
+    "total_hits": 211,
+    "total_false_alarms": 1,
+    "dwell_switches": 437,
+    "total_reward": 5228.5,
+    "avg_reward_per_dwell": 10.457,
+    "avg_intercept_rate_per_sec": 16.91,
+    "probability_of_detection_pd": 1.0,
+    "probability_of_false_alarm_pfa": 0.0023333333333333335,
+    "receiver_sensitivity_dbm": -85.0,
+    "percentage_correct_predictions": 0.0,
+    "avg_intercept_time_error_ms": 0.0,
+    "time_to_first_intercept_sec": {
+      "RADAR_SURV_01": 0.1,
+      "RADAR_AGILE_02": 0.15,
+      "RADAR_NAV_04": 0.125,
+      "DRONE_UPLINK_03": 0.825
+    },
+    "interception_ratio_by_emitter": {
+      "RADAR_SURV_01": 0.128,
+      "RADAR_AGILE_02": 0.1312,
+      "RADAR_NAV_04": 0.144,
+      "DRONE_UPLINK_03": 0.0746
+    },
+    "interception_ratio_by_type": {
+      "SPATIAL_SCAN_RADAR": 0.136,
+      "FREQUENCY_AGILE": 0.1312,
+      "BURST_COMM": 0.0746
+    }
+  },
+  {
+    "scheduler_name": "Static Priority (Open-Loop)",
+    "total_dwells": 500,
+    "total_simulation_time_sec": 12.475,
+    "total_hits": 192,
+    "total_false_alarms": 1,
+    "dwell_switches": 420,
+    "total_reward": 4882.666666666667,
+    "avg_reward_per_dwell": 9.765333333333333,
+    "avg_intercept_rate_per_sec": 15.39,
+    "probability_of_detection_pd": 1.0,
+    "probability_of_false_alarm_pfa": 0.0021333333333333334,
+    "receiver_sensitivity_dbm": -85.0,
+    "percentage_correct_predictions": 0.0,
+    "avg_intercept_time_error_ms": 0.0,
+    "time_to_first_intercept_sec": {
+      "RADAR_SURV_01": 0.325,
+      "RADAR_AGILE_02": 0.05,
+      "RADAR_NAV_04": 0.025,
+      "DRONE_UPLINK_03": 1.225
+    },
+    "interception_ratio_by_emitter": {
+      "RADAR_SURV_01": 0.08,
+      "RADAR_AGILE_02": 0.1742,
+      "RADAR_NAV_04": 0.11,
+      "DRONE_UPLINK_03": 0.0877
+    },
+    "interception_ratio_by_type": {
+      "SPATIAL_SCAN_RADAR": 0.095,
+      "FREQUENCY_AGILE": 0.1742,
+      "BURST_COMM": 0.0877
+    }
+  },
+  {
+    "scheduler_name": "Discounted UCB (Online MAB)",
+    "total_dwells": 500,
+    "total_simulation_time_sec": 12.475,
+    "total_hits": 248,
+    "total_false_alarms": 2,
+    "dwell_switches": 499,
+    "total_reward": 6464.5,
+    "avg_reward_per_dwell": 12.929,
+    "avg_intercept_rate_per_sec": 19.933333333333334,
+    "probability_of_detection_pd": 1.0,
+    "probability_of_false_alarm_pfa": 0.003933333333333333,
+    "receiver_sensitivity_dbm": -85.0,
+    "percentage_correct_predictions": 0.0,
+    "avg_intercept_time_error_ms": 0.0,
+    "time_to_first_intercept_sec": {
+      "RADAR_SURV_01": 0.05,
+      "RADAR_AGILE_02": 0.1,
+      "RADAR_NAV_04": 0.175,
+      "DRONE_UPLINK_03": 0.5
+    },
+    "interception_ratio_by_emitter": {
+      "RADAR_SURV_01": 0.176,
+      "RADAR_AGILE_02": 0.0928,
+      "RADAR_NAV_04": 0.176,
+      "DRONE_UPLINK_03": 0.1184
+    },
+    "interception_ratio_by_type": {
+      "SPATIAL_SCAN_RADAR": 0.176,
+      "FREQUENCY_AGILE": 0.10559999999999999,
+      "BURST_COMM": 0.1184
+    }
+  },
+  {
+    "scheduler_name": "EXP3 (Adversarial MAB)",
+    "total_dwells": 500,
+    "total_simulation_time_sec": 12.475,
+    "total_hits": 389,
+    "total_false_alarms": 0,
+    "dwell_switches": 343,
+    "total_reward": 10316.0,
+    "avg_reward_per_dwell": 20.632,
+    "avg_intercept_rate_per_sec": 31.179999999999996,
+    "probability_of_detection_pd": 1.0,
+    "probability_of_false_alarm_pfa": 0.0029999999999999996,
+    "receiver_sensitivity_dbm": -85.0,
+    "percentage_correct_predictions": 0.0,
+    "avg_intercept_time_error_ms": 0.0,
+    "time_to_first_intercept_sec": {
+      "RADAR_SURV_01": 0.0,
+      "RADAR_AGILE_02": 0.05,
+      "RADAR_NAV_04": 0.025,
+      "DRONE_UPLINK_03": 1.65
+    },
+    "interception_ratio_by_emitter": {
+      "RADAR_SURV_01": 0.282,
+      "RADAR_AGILE_02": 0.0317,
+      "RADAR_NAV_04": 0.428,
+      "DRONE_UPLINK_03": 0.0877
+    },
+    "interception_ratio_by_type": {
+      "SPATIAL_SCAN_RADAR": 0.355,
+      "FREQUENCY_AGILE": 0.0317,
+      "BURST_COMM": 0.0877
+    }
+  },
+  {
+    "scheduler_name": "Deep Q-Network (RL Policy)",
+    "total_dwells": 500,
+    "total_simulation_time_sec": 12.475,
+    "total_hits": 382,
+    "total_false_alarms": 0,
+    "dwell_switches": 243,
+    "total_reward": 12952.0,
+    "avg_reward_per_dwell": 25.904,
+    "avg_intercept_rate_per_sec": 30.62,
+    "probability_of_detection_pd": 1.0,
+    "probability_of_false_alarm_pfa": 0.0029,
+    "receiver_sensitivity_dbm": -85.0,
+    "percentage_correct_predictions": 0.0,
+    "avg_intercept_time_error_ms": 0.0,
+    "time_to_first_intercept_sec": {
+      "RADAR_SURV_01": 0.6,
+      "RADAR_AGILE_02": 0.025,
+      "RADAR_NAV_04": 0.2,
+      "DRONE_UPLINK_03": 0.45
+    },
+    "interception_ratio_by_emitter": {
+      "RADAR_SURV_01": 0.528,
+      "RADAR_AGILE_02": 0.0566,
+      "RADAR_NAV_04": 0.148,
+      "DRONE_UPLINK_03": 0.0526
+    },
+    "interception_ratio_by_type": {
+      "SPATIAL_SCAN_RADAR": 0.338,
+      "FREQUENCY_AGILE": 0.06036666666666666,
+      "BURST_COMM": 0.0526
+    }
+  },
+  {
+    "scheduler_name": "Predictive Temporal Interceptor",
+    "total_dwells": 500,
+    "total_simulation_time_sec": 12.475,
+    "total_hits": 209,
+    "total_false_alarms": 1,
+    "dwell_switches": 401,
+    "total_reward": 5178.333333333333,
+    "avg_reward_per_dwell": 10.356666666666667,
+    "avg_intercept_rate_per_sec": 16.80333333333333,
+    "probability_of_detection_pd": 1.0,
+    "probability_of_false_alarm_pfa": 0.0011333333333333332,
+    "receiver_sensitivity_dbm": -85.0,
+    "percentage_correct_predictions": 39.25,
+    "avg_intercept_time_error_ms": 35.11000000000001,
+    "time_to_first_intercept_sec": {
+      "RADAR_SURV_01": 0.05,
+      "RADAR_AGILE_02": 0.1,
+      "RADAR_NAV_04": 0.175,
+      "DRONE_UPLINK_03": 0.825
+    },
+    "interception_ratio_by_emitter": {
+      "RADAR_SURV_01": 0.126,
+      "RADAR_AGILE_02": 0.1109,
+      "RADAR_NAV_04": 0.124,
+      "DRONE_UPLINK_03": 0.1447
+    },
+    "interception_ratio_by_type": {
+      "SPATIAL_SCAN_RADAR": 0.125,
+      "FREQUENCY_AGILE": 0.11536666666666666,
+      "BURST_COMM": 0.1447
+    }
+  },
+  {
+    "scheduler_name": "Prime-Staggered Periodic",
+    "total_dwells": 500,
+    "total_simulation_time_sec": 12.475,
+    "total_hits": 209,
+    "total_false_alarms": 0,
+    "dwell_switches": 500,
+    "total_reward": 5106.5,
+    "avg_reward_per_dwell": 10.213,
+    "avg_intercept_rate_per_sec": 16.75,
+    "probability_of_detection_pd": 1.0,
+    "probability_of_false_alarm_pfa": 0.0,
+    "receiver_sensitivity_dbm": -85.0,
+    "percentage_correct_predictions": 0.0,
+    "avg_intercept_time_error_ms": 0.0,
+    "time_to_first_intercept_sec": {
+      "RADAR_SURV_01": 0.125,
+      "RADAR_AGILE_02": 0.4,
+      "RADAR_NAV_04": 0.1,
+      "DRONE_UPLINK_03": 0.3
+    },
+    "interception_ratio_by_emitter": {
+      "RADAR_SURV_01": 0.126,
+      "RADAR_AGILE_02": 0.1199,
+      "RADAR_NAV_04": 0.126,
+      "DRONE_UPLINK_03": 0.1316
+    },
+    "interception_ratio_by_type": {
+      "SPATIAL_SCAN_RADAR": 0.126,
+      "FREQUENCY_AGILE": 0.1199,
+      "BURST_COMM": 0.1316
+    }
+  }
+]
