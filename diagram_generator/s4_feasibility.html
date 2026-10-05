@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body { width: 3040px; height: 1014px; background: transparent; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .cards-row { width: 2980px; height: 950px; display: flex; justify-content: space-between; gap: 40px; }
+  .card {
+    flex: 1; background: #ffffff; border: 3px solid #1e293b; border-radius: 36px; padding: 44px 38px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.06); display: flex; flex-direction: column;
+  }
+  .card-header { font-family: 'Georgia', serif; font-size: 46px; font-weight: bold; color: #0033cc; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid #e2e8f0; }
+  .card ul { list-style: disc; margin-left: 32px; font-size: 26px; line-height: 1.6; color: #1e293b; flex: 1; display: flex; flex-direction: column; justify-content: space-around; }
+  .card ul li { margin-bottom: 14px; }
+</style>
+</head>
+<body>
+<div class="cards-row">
+  <div class="card">
+    <div class="card-header">Feasibility</div>
+    <ul>
+      <li><strong>Working prototype integrates 8 scan schedulers</strong> (DQN, D-UCB, EXP3, Predictive, Periodic, Sequential, Random, Priority) with an agile RF simulation engine.</li>
+      <li><strong>Calibrated using the Alan Turing Institute Radar Emitter Dataset</strong> (JC Wise 2024) and DRDO Electronic Support Measures operational benchmarks.</li>
+      <li><strong>Lightweight Python/PyTorch inference</strong> executes in &lt;1ms per dwell step, fully compatible with embedded tactical DSPs and FPGA microcontrollers.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Viability</div>
+    <ul>
+      <li><strong>Closed-loop cognitive scheduling delivers +217% higher cumulative reward</strong> (+32.36 vs +10.20) and 97.3% sustained threat interception compared to static sweeps.</li>
+      <li><strong>Pure software upgrade</strong> integrates seamlessly into existing heterodyne receiver architectures without requiring expensive RF hardware replacement.</li>
+      <li><strong>Modular plugin design</strong> allows new emitter classes, antenna radiation patterns, and operational frequency bands to be incorporated instantly.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Practical Implementation</div>
+    <ul>
+      <li><strong>Deployable immediately</strong> as a simulation-backed tactical decision-support system and cognitive scheduler add-on for ESM suites.</li>
+      <li><strong>High-speed WebSocket telemetry server</strong> feeds a live browser-based C2 console featuring a 360&deg; PPI radar scope, spectrum waterfall, and audio threat alarms.</li>
+      <li><strong>Phased hardware-in-the-loop roadmap</strong> supports direct integration with SDR receivers (HackRF One, USRP) and DRDO DLRL receiver frontends.</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

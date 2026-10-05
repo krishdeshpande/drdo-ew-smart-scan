@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body { width: 1604px; height: 1924px; background: #ffffff; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; }
+  
+  .pill-banner {
+    background: #005596; border-radius: 40px; padding: 20px 48px; display: flex; align-items: center;
+    gap: 24px; color: white; box-shadow: 0 8px 24px rgba(0,85,150,0.25); margin-bottom: 20px;
+  }
+  .pill-banner h2 { font-family: 'Georgia', serif; font-size: 52px; font-weight: bold; }
+  
+  .quote-card {
+    background: #ffffff; border: 3px solid #1e293b; border-radius: 36px; padding: 36px 44px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: space-between;
+    gap: 36px; position: relative;
+  }
+  
+  .quote-content { flex: 1; }
+  .quote-marks { font-family: 'Georgia', serif; font-size: 72px; color: #64748b; line-height: 0.8; font-weight: bold; }
+  .quote-text { font-size: 32px; line-height: 1.5; color: #1e293b; font-weight: 500; margin: 12px 0; }
+  .quote-text strong { color: #005596; font-weight: 800; }
+  
+  .card-label-col {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 280px; text-align: center; flex-shrink: 0; border-left: 2px solid #e2e8f0; padding-left: 28px;
+  }
+  .label-icon { width: 90px; height: 90px; margin-bottom: 12px; }
+  .label-title { font-size: 30px; font-weight: 800; color: #0f172a; line-height: 1.2; }
+</style>
+</head>
+<body>
+  <div class="pill-banner">
+    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <h2>Benefits of the Solution</h2>
+  </div>
+
+  <!-- Card 1 -->
+  <div class="quote-card">
+    <div class="quote-content">
+      <div class="quote-marks">&ldquo;</div>
+      <div class="quote-text">Slashes threat detection latency to <strong>&lt;40ms</strong> by anticipating agile emitter beam arrivals, giving aircraft vital seconds to evade radar lock.</div>
+      <div class="quote-marks" style="text-align:right;">&rdquo;</div>
+    </div>
+    <div class="card-label-col">
+      <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <div class="label-title">Threat Intercept Speed</div>
+    </div>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="quote-card">
+    <div class="quote-content">
+      <div class="quote-marks">&ldquo;</div>
+      <div class="quote-text"><strong>100% software-defined</strong> cognitive layer avoids multi-crore hardware overhauls by extracting maximum intelligence from existing narrow-IBW receivers.</div>
+      <div class="quote-marks" style="text-align:right;">&rdquo;</div>
+    </div>
+    <div class="card-label-col">
+      <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <div class="label-title">Lifecycle Economy</div>
+    </div>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="quote-card">
+    <div class="quote-content">
+      <div class="quote-marks">&ldquo;</div>
+      <div class="quote-text">Autonomously discovers and tracks hostile emitters with <strong>zero prior intelligence</strong>, guaranteeing comprehensive baseline spectrum protection.</div>
+      <div class="quote-marks" style="text-align:right;">&rdquo;</div>
+    </div>
+    <div class="card-label-col">
+      <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <div class="label-title">Operational Readiness</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+  body { width: 2280px; height: 994px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 15px; }
+  .cloud {
+    background: #3f5e3b; color: #ffffff; font-family: 'Georgia', serif; font-size: 50px; font-weight: bold;
+    padding: 22px 80px; border-radius: 60px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); text-align: center; line-height: 1.15;
+  }
+  .svg-lines { width: 2160px; height: 85px; margin-top: -15px; margin-bottom: 5px; }
+  .cards-row { width: 2160px; display: flex; justify-content: space-between; gap: 32px; }
+  .card { flex: 1; height: 720px; border-radius: 36px; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.12); display: flex; flex-direction: column; }
+  .card-inner { border: 3px dashed rgba(255,255,255,0.75); border-radius: 26px; height: 100%; padding: 30px 22px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .card-title { color: #ffffff; font-size: 31px; font-weight: 700; line-height: 1.25; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+  .sep { width: 80%; height: 2px; background: rgba(255,255,255,0.6); margin: 16px 0 22px 0; }
+  .card-desc { color: #ffffff; font-size: 23px; line-height: 1.45; font-weight: 400; flex: 1; }
+  .card-icon { width: 120px; height: 120px; margin-top: 12px; }
+  .c1 { background: #b45309; }
+  .c2 { background: #991b1b; }
+  .c3 { background: #854d0e; }
+  .c4 { background: #c2410c; }
+  .c5 { background: #475569; }
+</style>
+</head>
+<body>
+  <div class="cloud">Innovation<br>and Uniqueness</div>
+  <svg class="svg-lines" viewBox="0 0 2160 85" fill="none">
+    <path d="M1080 0 C 1080 40, 216 10, 216 75" stroke="#2b2b2b" stroke-width="4" fill="none"/>
+    <path d="M1080 0 C 1080 40, 648 20, 648 75" stroke="#2b2b2b" stroke-width="4" fill="none"/>
+    <path d="M1080 0 L 1080 75" stroke="#2b2b2b" stroke-width="4" fill="none"/>
+    <path d="M1080 0 C 1080 40, 1512 20, 1512 75" stroke="#2b2b2b" stroke-width="4" fill="none"/>
+    <path d="M1080 0 C 1080 40, 1944 10, 1944 75" stroke="#2b2b2b" stroke-width="4" fill="none"/>
+  </svg>
+  <div class="cards-row">
+    <div class="card c1"><div class="card-inner">
+      <div class="card-title">Non-Stationary<br>Bandit Tuning</div><div class="sep"></div>
+      <div class="card-desc">Combines D-UCB and EXP3 algorithms to dynamically learn emitter presence without requiring pre-mission intelligence databases.</div>
+      <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M4.9 19.1C2 16.2 2 11.5 4.9 8.6M19.1 19.1C22 16.2 22 11.5 19.1 8.6M7.8 16.2C6 14.4 6 11.6 7.8 9.8M16.2 16.2C18 14.4 18 11.6 16.2 9.8M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0M12 14v8"/></svg>
+    </div></div>
+    <div class="card c2"><div class="card-inner">
+      <div class="card-title">Deep Q-Network<br>RL Policy</div><div class="sep"></div>
+      <div class="card-desc">Trained on 100,000+ radar pulse bursts to optimize dwell-time allocation, achieving +32.36 reward (vs +10.20 baseline).</div>
+      <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><circle cx="12" cy="12" r="3"/><line x1="8.5" y1="7.5" x2="10" y2="10.5"/><line x1="8.5" y1="16.5" x2="10" y2="13.5"/><line x1="15.5" y1="7.5" x2="14" y2="10.5"/><line x1="15.5" y1="16.5" x2="14" y2="13.5"/></svg>
+    </div></div>
+    <div class="card c3"><div class="card-inner">
+      <div class="card-title">Predictive Beam<br>Intercept</div><div class="sep"></div>
+      <div class="card-desc">Synchronizes receiver dwells with hostile rotating radar scan intervals, cutting lookahead intercept error down to 38.0 ms.</div>
+      <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 6"/><path d="M12 7a5 5 0 0 1 5 5"/></svg>
+    </div></div>
+    <div class="card c4"><div class="card-inner">
+      <div class="card-title">Anti-Stroboscopic<br>Sweeper</div><div class="sep"></div>
+      <div class="card-desc">Employs prime-staggered non-harmonic dwell patterns, eliminating periodic blind spots and defeating threat evasion.</div>
+      <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M2 12h3l2-6 3 12 3-8 2 5 2-3h5"/><path d="M2 20h20" stroke-dasharray="2 2"/></svg>
+    </div></div>
+    <div class="card c5"><div class="card-inner">
+      <div class="card-title">Tactical 360°<br>PPI Scope</div><div class="sep"></div>
+      <div class="card-desc">Full tactical C2 dashboard with 360° PPI radar scope, real-time waterfall display, and live audio threat alarms via WebSockets.</div>
+      <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+    </div></div>
+  </div>
+</body>
+</html>

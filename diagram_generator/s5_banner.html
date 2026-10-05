@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { width: 3000px; height: 160px; background: transparent; display: flex; align-items: center; justify-content: center; }
+  .banner-container {
+    width: 2960px; height: 140px; position: relative; display: flex; align-items: center; justify-content: center;
+  }
+  .banner-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  .banner-text {
+    position: relative; z-index: 2; font-family: 'Georgia', serif; font-size: 38px; font-weight: bold; font-style: italic;
+    color: #0f172a; text-align: center; padding: 0 80px; letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+<div class="banner-container">
+  <svg class="banner-svg" viewBox="0 0 2960 140" preserveAspectRatio="none">
+    <polygon points="0,0 2960,0 2900,70 2960,140 0,140 60,70" fill="#e2e8f0" stroke="#0f172a" stroke-width="4"/>
+  </svg>
+  <div class="banner-text">
+    “India’s next-generation cognitive electronic warfare intelligence—zero-prior adaptation, rapid threat intercepts, mission-ready dominance.”
+  </div>
+</div>
+</body>
+</html>

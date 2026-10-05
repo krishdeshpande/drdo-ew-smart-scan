@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body { width: 2392px; height: 1684px; background: #ffffff; padding: 30px; display: flex; align-items: center; justify-content: center; position: relative; }
+  
+  .hub-center {
+    width: 480px; height: 480px; border-radius: 50%; background: #ffffff;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.12); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; padding: 36px;
+    position: relative; z-index: 10; border: 10px solid transparent;
+    background-image: linear-gradient(white, white), conic-gradient(#0284c7 0% 25%, #16a34a 25% 50%, #ea580c 50% 75%, #9333ea 75% 100%);
+    background-origin: border-box; background-clip: padding-box, border-box;
+  }
+  .hub-center h2 { font-family: 'Georgia', serif; font-size: 44px; font-weight: bold; color: #0f172a; line-height: 1.25; margin-top: 14px; }
+  
+  .svg-spokes { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: 2; }
+  
+  .node-card {
+    position: absolute; background: #f8fafc; border: 3px solid #cbd5e1; border-radius: 26px;
+    padding: 26px 34px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); width: 680px; z-index: 5;
+    display: flex; gap: 24px; align-items: flex-start;
+  }
+  .node-icon { width: 76px; height: 76px; flex-shrink: 0; border-radius: 18px; display: flex; align-items: center; justify-content: center; }
+  .node-title { font-size: 34px; font-weight: 800; margin-bottom: 8px; }
+  .node-desc { font-size: 24px; line-height: 1.45; color: #334155; }
+  
+  .node-top { top: 60px; left: 50%; transform: translateX(-50%); }
+  .node-right { right: 60px; top: 50%; transform: translateY(-50%); }
+  .node-left { left: 60px; top: 50%; transform: translateY(-50%); }
+  .node-bottom { bottom: 60px; left: 50%; transform: translateX(-50%); }
+  
+  .i-blue { background: #e0f2fe; color: #0284c7; }
+  .i-green { background: #dcfce7; color: #16a34a; }
+  .i-orange { background: #ffedd5; color: #ea580c; }
+  .i-purple { background: #f3e8ff; color: #9333ea; }
+</style>
+</head>
+<body>
+  <svg class="svg-spokes" viewBox="0 0 2392 1684" fill="none">
+    <!-- Top connector -->
+    <path d="M 1196 602 L 1196 280" stroke="#0284c7" stroke-width="7"/>
+    <circle cx="1196" cy="280" r="14" fill="#0284c7"/>
+    
+    <!-- Right connector -->
+    <path d="M 1436 842 L 1690 842" stroke="#16a34a" stroke-width="7"/>
+    <circle cx="1690" cy="842" r="14" fill="#16a34a"/>
+    
+    <!-- Left connector -->
+    <path d="M 956 842 L 700 842" stroke="#ea580c" stroke-width="7"/>
+    <circle cx="700" cy="842" r="14" fill="#ea580c"/>
+    
+    <!-- Bottom connector -->
+    <path d="M 1196 1082 L 1196 1400" stroke="#9333ea" stroke-width="7"/>
+    <circle cx="1196" cy="1400" r="14" fill="#9333ea"/>
+  </svg>
+
+  <div class="hub-center">
+    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+    <h2>Potential Impact on<br>Stakeholders</h2>
+  </div>
+
+  <!-- Top: ESM Operators -->
+  <div class="node-card node-top">
+    <div class="node-icon i-blue"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.9 19.1C2 16.2 2 11.5 4.9 8.6M19.1 19.1C22 16.2 22 11.5 19.1 8.6M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0M12 14v8"/></svg></div>
+    <div>
+      <div class="node-title" style="color:#0284c7;">ESM Operators:</div>
+      <div class="node-desc">Automated cognitive sweeping eliminates manual tuning fatigue; real-time audio and visual alerts provide instant threat warning and lock-on cues.</div>
+    </div>
+  </div>
+
+  <!-- Right: Mission Commanders -->
+  <div class="node-card node-right">
+    <div class="node-icon i-green"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7M4 21V4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v17"/></svg></div>
+    <div>
+      <div class="node-title" style="color:#16a34a;">Mission Commanders:</div>
+      <div class="node-desc">Live tactical 360° PPI radar scope provides real-time Electronic Order of Battle (EOB), active radar bearings, and threat alert status.</div>
+    </div>
+  </div>
+
+  <!-- Left: Defence R&D -->
+  <div class="node-card node-left">
+    <div class="node-icon i-orange"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+    <div>
+      <div class="node-title" style="color:#ea580c;">Defence R&D (DRDO / DLRL):</div>
+      <div class="node-desc">Standardized, modular Python/PyTorch framework enables rapid algorithmic prototyping and seamless integration into existing EW suites.</div>
+    </div>
+  </div>
+
+  <!-- Bottom: Fleet Managers -->
+  <div class="node-card node-bottom">
+    <div class="node-icon i-purple"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <div>
+      <div class="node-title" style="color:#9333ea;">Defence Fleet Managers:</div>
+      <div class="node-desc">Software-only deployment brings cognitive capabilities to airborne (UAV/fighter), naval, and ground ESM platforms with minimal SWaP-C cost.</div>
+    </div>
+  </div>
+</body>
+</html>

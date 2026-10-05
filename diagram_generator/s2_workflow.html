@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body { width: 1972px; height: 1150px; background: #ffffff; padding: 20px; }
+  .box { width: 100%; height: 100%; border: 3px solid #1e293b; border-radius: 28px; background: #ffffff; padding: 24px 36px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+  .title { font-family: 'Georgia', serif; font-size: 44px; font-weight: bold; text-align: center; color: #0f172a; }
+  .subtitle { font-size: 25px; font-weight: 500; text-align: center; color: #334155; margin-top: 4px; }
+  .alert { position: absolute; right: 28px; top: 16px; background: #f3e8ff; border: 2px dashed #9333ea; border-radius: 16px; padding: 10px 18px; font-size: 16px; color: #581c87; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+  .top-flow { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+  .badge-pink { background: #fce7f3; border: 2.5px solid #db2777; border-radius: 40px; padding: 12px 30px; font-size: 26px; font-weight: bold; color: #9d174d; display: flex; align-items: center; gap: 10px; }
+  .badge-purple { background: #e0e7ff; border: 1.5px solid #6366f1; color: #4338ca; font-size: 18px; font-weight: 700; padding: 4px 16px; border-radius: 14px; margin-bottom: 8px; display: inline-block; }
+  .yellow-card { background: #fef9c3; border: 2.5px solid #1e293b; border-radius: 18px; padding: 12px 18px; display: flex; align-items: flex-start; gap: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
+  .yellow-card h4 { font-size: 20px; color: #0f172a; font-weight: 700; margin-bottom: 3px; }
+  .yellow-card p { font-size: 15px; color: #334155; line-height: 1.35; }
+  .engine-card { width: 380px; background: #fef9c3; border: 2.5px solid #1e293b; border-radius: 22px; padding: 22px; text-align: left; }
+  .engine-card h3 { font-size: 22px; color: #0f172a; font-weight: 700; text-align: center; margin-bottom: 12px; }
+  .engine-card ul { list-style: disc; margin-left: 22px; font-size: 17px; color: #334155; line-height: 1.5; }
+  .diamond { width: 210px; height: 210px; background: #0284c7; transform: rotate(45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(2,132,199,0.25); margin: 0 35px; }
+  .diamond-in { transform: rotate(-45deg); text-align: center; color: #fff; padding: 8px; }
+  .decision-box { background: #fef9c3; border: 2.5px solid #1e293b; border-radius: 16px; padding: 12px 18px; font-size: 18px; font-weight: bold; color: #0f172a; text-align: center; }
+  .bottom-flow { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 2.5px dashed #cbd5e1; gap: 16px; }
+  .btm-card { flex: 1; background: #fef9c3; border: 2.5px solid #1e293b; border-radius: 18px; padding: 14px 18px; display: flex; align-items: center; gap: 14px; }
+  .btm-card h4 { font-size: 19px; color: #0f172a; font-weight: 700; margin-bottom: 3px; }
+  .btm-card p { font-size: 15px; color: #475569; line-height: 1.35; }
+</style>
+</head>
+<body>
+<div class="box">
+  <div>
+    <div class="title">SENTINEL-EW &mdash; End-to-End Workflow</div>
+    <div class="subtitle">Cognitive ES Receiver Strategy for Wideband Multi-Threat Spectrum Surveillance</div>
+  </div>
+  <div class="alert">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="#ef4444"><path d="M12 2L1 21h22L12 2zm0 3.5L19.5 19h-15L12 5.5zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z"/></svg>
+    <span><strong>Live Tactical C2 Telemetry</strong><br>Pd vs Pfa &bull; 38ms Lookahead &bull; Waterfall Scope</span>
+  </div>
+  <div class="top-flow">
+    <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+      <div class="badge-pink"><svg width="22" height="22" viewBox="0 0 24 24" fill="#db2777"><path d="M8 5v14l11-7z"/></svg>Start</div>
+      <div style="font-size:32px; font-weight:bold; color:#1e293b;">&darr;</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px; width:440px;">
+      <div class="badge-purple">RF Spectrum & Telemetry Inputs</div>
+      <div class="yellow-card">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1e293b" stroke-width="2"><path d="M4.9 19.1C2 16.2 2 11.5 4.9 8.6M19.1 19.1C22 16.2 22 11.5 19.1 8.6M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0M12 14v8"/></svg>
+        <div><h4>Hostile Radar Emitters</h4><p>Pulsed Radars, Agile Hoppers, Staggered PRF, Jammers</p></div>
+      </div>
+      <div class="yellow-card">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1e293b" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/></svg>
+        <div><h4>Wideband ES Receiver</h4><p>Tunable Local Osc, Narrow IBW Filter, FFT Detector</p></div>
+      </div>
+      <div class="yellow-card">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1e293b" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <div><h4>Dwell & Intercept History</h4><p>Band Dwell Duration, Hit/Miss Counter, Revisit Gap</p></div>
+      </div>
+    </div>
+    <div style="font-size:32px; font-weight:bold; color:#1e293b;">&rarr;</div>
+    <div class="engine-card">
+      <h3>Cognitive EW Dwell Engine</h3>
+      <ul>
+        <li>D-UCB Non-Stationary Bandit</li>
+        <li>Deep Q-Network RL Scheduler</li>
+        <li>Beam-Arrival Synchronizer</li>
+        <li>Anti-Stroboscopic Sweeper</li>
+        <li>DRDO FoM Real-Time Scoring</li>
+      </ul>
+    </div>
+    <div style="font-size:32px; font-weight:bold; color:#1e293b;">&rarr;</div>
+    <div style="display:flex; flex-direction:column; align-items:center;">
+      <div class="badge-purple" style="margin-bottom:18px;">AI Decision Layer</div>
+      <div class="diamond">
+        <div class="diamond-in">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>
+          <h4 style="font-size:19px; font-weight:bold;">Threat Intercept</h4>
+          <p style="font-size:13px;">Priority Scoring<br>Agile Lock-On</p>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:32px; font-weight:bold; color:#1e293b;">&rarr;</div>
+    <div style="display:flex; flex-direction:column; gap:18px; width:330px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:17px; font-weight:bold; color:#475569;">No:</span>
+        <div class="decision-box" style="flex:1;">Continue Wideband Sweep</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:17px; font-weight:bold; color:#0284c7;">Yes:</span>
+        <div class="decision-box" style="flex:1; background:#e0f2fe; border-color:#0284c7;">Lock On & Rapid Dwell</div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-flow">
+    <div class="btm-card">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 6"/></svg>
+      <div><h4>Figures of Merit (FoM)</h4><p>Pd >95% &bull; MDS -95dBm &bull; Low False Alarms</p></div>
+    </div>
+    <div class="btm-card">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <div><h4>Intercept Reliability</h4><p>97.3% Sustained Rate &bull; 38ms Lookahead</p></div>
+    </div>
+    <div class="btm-card">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+      <div><h4>Tactical Recommendation</h4><p>Threat EOB &bull; Jamming Warning &bull; Audio Cues</p></div>
+    </div>
+    <div class="badge-pink">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#db2777" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>End
+    </div>
+  </div>
+</div>
+</body>
+</html>

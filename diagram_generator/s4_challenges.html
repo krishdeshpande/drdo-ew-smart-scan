@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body {
+    width: 2480px; height: 1244px; background: #ffffff; padding: 30px;
+    background-image: radial-gradient(#e2e8f0 1.5px, transparent 1.5px);
+    background-size: 24px 24px; display: flex; align-items: center; justify-content: space-between; position: relative;
+  }
+  .center-divider {
+    position: absolute; left: 50%; top: 40px; bottom: 40px; width: 2px;
+    border-left: 2px dashed #94a3b8;
+  }
+  
+  .half { width: 48%; height: 100%; display: flex; align-items: center; position: relative; }
+  
+  .hub {
+    width: 280px; height: 280px; border-radius: 50%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12); z-index: 5; flex-shrink: 0;
+  }
+  .hub-title { font-size: 28px; font-weight: 800; line-height: 1.25; margin-top: 10px; }
+  
+  .hub-red { background: #e0f2fe; border: 4px solid #0284c7; color: #0f172a; }
+  .hub-green { background: #dcfce7; border: 4px solid #16a34a; color: #0f172a; }
+  
+  .items-col { flex: 1; display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding: 20px 0; }
+  
+  .item-row { display: flex; align-items: center; gap: 20px; }
+  .badge-red {
+    background: #ef4444; color: white; width: 64px; height: 64px; border-radius: 50%;
+    font-size: 28px; font-weight: 900; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; box-shadow: 0 4px 10px rgba(239,68,68,0.3);
+  }
+  .badge-green {
+    background: #16a34a; color: white; width: 64px; height: 64px; border-radius: 50%;
+    font-size: 28px; font-weight: 900; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; box-shadow: 0 4px 10px rgba(22,163,74,0.3);
+  }
+  
+  .item-text { font-size: 22px; line-height: 1.45; color: #1e293b; }
+  .item-text strong { font-size: 23px; color: #0f172a; }
+</style>
+</head>
+<body>
+  <div class="center-divider"></div>
+
+  <!-- Left: Challenges -->
+  <div class="half" style="padding-right: 30px; gap: 30px;">
+    <div class="hub hub-red">
+      <svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <div class="hub-title">Potential Challenges<br>and Risks</div>
+    </div>
+    <div class="items-col">
+      <div class="item-row">
+        <div class="badge-red">01</div>
+        <div class="item-text"><strong>Non-Stationary Hopping:</strong> Fast frequency agility causes threats to depart before receiver dwell completes.</div>
+      </div>
+      <div class="item-row">
+        <div class="badge-red">02</div>
+        <div class="item-text"><strong>IBW Hardware Bottleneck:</strong> Instantaneous bandwidth is an order of magnitude narrower than overall spectrum.</div>
+      </div>
+      <div class="item-row">
+        <div class="badge-red">03</div>
+        <div class="item-text"><strong>Stroboscopic Blind Spots:</strong> Periodic sweeping synchronizes with radar rotation, causing persistent dropouts.</div>
+      </div>
+      <div class="item-row">
+        <div class="badge-red">04</div>
+        <div class="item-text"><strong>Noise & Jamming Interference:</strong> Thermal noise bursts and intentional jamming trigger false alarms.</div>
+      </div>
+      <div class="item-row">
+        <div class="badge-red">05</div>
+        <div class="item-text"><strong>Real-Time Edge Latency:</strong> Scheduling decisions must execute in &lt;1ms intervals on tactical DSP processors.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Strategies -->
+  <div class="half" style="padding-left: 30px; gap: 30px; flex-direction: row-reverse;">
+    <div class="hub hub-green">
+      <svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+      <div class="hub-title">Strategies For<br>Overcoming<br>Challenges</div>
+    </div>
+    <div class="items-col">
+      <div class="item-row">
+        <div class="badge-green">01</div>
+        <div class="item-text"><strong>Discounted Bandits (D-UCB):</strong> Exponential discounting (&gamma;=0.92) rapidly adapts to non-stationary agility.</div>
+      </div>
+      <div class="item-row">
+        <div class="badge-green">02</div>
+        <div class="item-text"><strong>Reinforcement Learning Policy:</strong> DQN dynamically allocates narrow IBW to high-priority threat bands.</div>
+      </div>
+      <div class="item-row">
+        <div class="badge-green">03</div>
+        <div class="item-text"><strong>Prime-Staggered Scanning:</strong> Anti-stroboscopic non-harmonic dwell patterns break periodic synchronization.</div>
+      </div>
+      <div class="item-row">
+        <div class="badge-green">04</div>
+        <div class="item-text"><strong>Adaptive CFAR & MDS Filter:</strong> Constant False Alarm Rate detector & MDS thresholds reject noise floor.</div>
+      </div>
+      <div class="item-row">
+        <div class="badge-green">05</div>
+        <div class="item-text"><strong>Optimized Vectorized Policy:</strong> Pre-compiled neural weights and tensor math guarantee &lt;1ms step latency.</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

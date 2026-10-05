@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body { width: 2998px; height: 1702px; background: #ffffff; padding: 24px; display: flex; gap: 28px; }
+  .zone-col {
+    flex: 1; border-radius: 28px; padding: 24px 20px; display: flex; flex-direction: column;
+    border: 3px solid; position: relative;
+  }
+  .zone-title {
+    text-align: center; font-size: 38px; font-weight: 800; margin-bottom: 20px;
+    padding-bottom: 12px; border-bottom: 2px solid rgba(0,0,0,0.1);
+  }
+  .sub-box {
+    background: #ffffff; border-radius: 20px; padding: 22px; margin-bottom: 20px;
+    border: 2px solid; box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  }
+  .sub-box h4 { font-size: 26px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+  .sub-box ul { list-style: square; margin-left: 28px; font-size: 21px; line-height: 1.55; color: #334155; }
+  
+  .z1 { background: #f0f9ff; border-color: #38bdf8; }
+  .z1 .zone-title { color: #0369a1; }
+  .z1 .sub-box { border-color: #bae6fd; }
+  .z1 h4 { color: #0284c7; }
+
+  .z2 { background: #f0fdf4; border-color: #22c55e; }
+  .z2 .zone-title { color: #15803d; }
+  .z2 .sub-box { border-color: #bbf7d0; }
+  .z2 h4 { color: #16a34a; }
+
+  .z3 { background: #faf5ff; border-color: #a855f7; }
+  .z3 .zone-title { color: #7e22ce; }
+  .z3 .sub-box { border-color: #e9d5ff; }
+  .z3 h4 { color: #9333ea; }
+
+  .z4 { background: #ecfeff; border-color: #06b6d4; }
+  .z4 .zone-title { color: #0e7490; }
+  .z4 .sub-box { border-color: #a5f3fc; }
+  .z4 h4 { color: #0891b2; }
+
+  .operator-box {
+    margin-top: auto; background: #ffffff; border-radius: 20px; padding: 20px;
+    border: 2px dashed #0284c7; display: flex; align-items: center; gap: 18px;
+  }
+  .operator-box h5 { font-size: 22px; color: #0f172a; }
+  .operator-box p { font-size: 17px; color: #64748b; }
+</style>
+</head>
+<body>
+  <!-- Zone 1 -->
+  <div class="zone-col z1">
+    <div class="zone-title">Zone 1<br><span style="font-size:26px; font-weight:600;">RF Emitters & Threat Sources</span></div>
+    <div class="sub-box">
+      <h4><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M4.9 19.1C2 16.2 2 11.5 4.9 8.6M19.1 19.1C22 16.2 22 11.5 19.1 8.6M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0M12 14v8"/></svg>Active Threat Emitters</h4>
+      <ul>
+        <li>Rotating Radar G(&theta;, t) (Search / Track)</li>
+        <li>Frequency-Agile Fast Hoppers</li>
+        <li>Staggered / Jittered PRF Radars</li>
+        <li>Broadband Barrage / Spot Jammers</li>
+      </ul>
+    </div>
+    <div class="sub-box">
+      <h4><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 6"/></svg>Radiation Dynamics</h4>
+      <ul>
+        <li>Antenna Sidelobes & Mainbeam scan</li>
+        <li>Pulse Width: 0.2 &mu;s &ndash; 100 &mu;s</li>
+        <li>Multi-band RF span (0.5 &ndash; 18 GHz)</li>
+      </ul>
+    </div>
+    <div class="operator-box">
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div>
+        <h5>ESM Operator / EW Specialist</h5>
+        <p>Interactive Control & Live Tactical C2 Cues</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zone 2 -->
+  <div class="zone-col z2">
+    <div class="zone-title">Zone 2<br><span style="font-size:26px; font-weight:600;">Tunable ES Receiver Engine</span></div>
+    <div class="sub-box">
+      <h4><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/></svg>Heterodyne Front-End</h4>
+      <ul>
+        <li>Agile Tunable Local Oscillator (LO)</li>
+        <li>Narrow IBW Filter (1 of N sub-bands)</li>
+        <li>Dwell Settling Timer (&tau;_settle < 50 &mu;s)</li>
+        <li>Fast FFT Energy Detector & CFAR</li>
+      </ul>
+    </div>
+    <div class="sub-box">
+      <h4><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Pulse Measurement Unit</h4>
+      <ul>
+        <li>Time-of-Arrival (TOA) & Pulse Width</li>
+        <li>Frequency & Band Index Extraction</li>
+        <li>Pulse Amplitude & SNR Estimator</li>
+      </ul>
+    </div>
+    <div class="sub-box" style="margin-top:auto;">
+      <h4><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Receiver Calibration</h4>
+      <ul>
+        <li>MDS Sensitivity: &minus;95 dBm</li>
+        <li>Hardware Sweep Delay Modeling</li>
+        <li>Empirical Tuning Rate Verification</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Zone 3 -->
+  <div class="zone-col z3">
+    <div class="zone-title">Zone 3<br><span style="font-size:26px; font-weight:600;">Edge Schedulers & Relay</span></div>
+    <div class="sub-box">
+      <h4><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>Cognitive Schedulers</h4>
+      <ul>
+        <li>Discounted UCB Bandit (&gamma; = 0.92)</li>
+        <li>EXP3 Adversarial Bandit Policy</li>
+        <li>Deep Q-Network (PyTorch RL Agent)</li>
+        <li>Lookahead Beam Arrival Predictor</li>
+      </ul>
+    </div>
+    <div class="sub-box">
+      <h4><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>DRDO Figures of Merit</h4>
+      <ul>
+        <li>Probability of Intercept (Pd) Engine</li>
+        <li>Revisit Latency & Miss Rate Evaluator</li>
+        <li>Average Reward & Band Utilization</li>
+      </ul>
+    </div>
+    <div class="sub-box" style="margin-top:auto;">
+      <h4><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M2 12h20"/></svg>WebSocket Telemetry Relay</h4>
+      <ul>
+        <li>Sub-millisecond JSON Telemetry Push</li>
+        <li>Remote Mode & Parameter Control</li>
+        <li>Bidirectional C2 State Sync</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Zone 4 -->
+  <div class="zone-col z4">
+    <div class="zone-title">Zone 4<br><span style="font-size:26px; font-weight:600;">Tactical Intelligence & C2 Layer</span></div>
+    <div class="sub-box">
+      <h4><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><line x1="12" y1="3" x2="12" y2="21"/></svg>Tactical C2 Radar Console</h4>
+      <ul>
+        <li>360&deg; PPI Radar Scope Display</li>
+        <li>Real-Time Waterfall Spectrogram</li>
+        <li>Live Pulse Descriptor Word (PDW) Log</li>
+        <li>Multi-Frequency Energy Heatmap</li>
+      </ul>
+    </div>
+    <div class="sub-box">
+      <h4><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Electronic Order of Battle (EOB)</h4>
+      <ul>
+        <li>Hostile Radar Threat Classification</li>
+        <li>Angle-of-Arrival (AoA) & Bearing Track</li>
+        <li>Audio Tactical Strobe & Alarm Cues</li>
+      </ul>
+    </div>
+    <div class="sub-box" style="margin-top:auto;">
+      <h4><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Evidence & Audit Store</h4>
+      <ul>
+        <li>100,000+ Pulse Intercept Traces</li>
+        <li>DRDO Operational Compliance Logs</li>
+        <li>Full Mission Telemetry Replay</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

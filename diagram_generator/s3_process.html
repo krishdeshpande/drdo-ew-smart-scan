@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body { width: 1434px; height: 2150px; background: #ffffff; padding: 24px; }
+  .container {
+    width: 100%; height: 100%; border: 4px solid #1e293b; border-radius: 40px; background: #ffffff;
+    padding: 40px 48px; display: flex; flex-direction: column; position: relative;
+  }
+  .header {
+    display: flex; align-items: center; gap: 20px; border-bottom: 3px solid #e2e8f0; padding-bottom: 24px; margin-bottom: 36px;
+  }
+  .header h2 { font-size: 50px; font-weight: 900; color: #0f172a; letter-spacing: 1px; }
+  
+  .timeline { flex: 1; display: flex; flex-direction: column; justify-content: space-between; position: relative; padding: 10px 0; }
+  
+  /* S-curve SVG line behind the badges */
+  .curve-bg { position: absolute; top: 40px; bottom: 40px; left: 0; width: 100%; height: calc(100% - 80px); z-index: 1; pointer-events: none; }
+  
+  .step-row { display: flex; align-items: center; position: relative; z-index: 2; gap: 32px; }
+  .step-row.left { flex-direction: row; }
+  .step-row.right { flex-direction: row-reverse; }
+  
+  .circle-badge {
+    width: 160px; height: 160px; border-radius: 50%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; color: #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    flex-shrink: 0; border: 6px solid #ffffff;
+  }
+  .badge-num { font-size: 52px; font-weight: 900; line-height: 1; }
+  
+  .step-card {
+    flex: 1; background: #f8fafc; border: 2.5px solid #cbd5e1; border-radius: 26px; padding: 24px 30px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.04);
+  }
+  .step-card h3 { font-size: 34px; font-weight: 800; margin-bottom: 8px; }
+  .step-card p { font-size: 23px; line-height: 1.45; color: #475569; }
+  
+  .b1 { background: #0a2540; } .t1 { color: #0a2540; }
+  .b2 { background: #0284c7; } .t2 { color: #0284c7; }
+  .b3 { background: #16a34a; } .t3 { color: #16a34a; }
+  .b4 { background: #d97706; } .t4 { color: #d97706; }
+  .b5 { background: #ea580c; } .t5 { color: #ea580c; }
+  .b6 { background: #7c3aed; } .t6 { color: #7c3aed; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <h2>IMPLEMENTATION PROCESS</h2>
+  </div>
+
+  <div class="timeline">
+    <!-- Step 1 -->
+    <div class="step-row left">
+      <div class="circle-badge b1"><span class="badge-num">1</span></div>
+      <div class="step-card">
+        <h3 class="t1">Model RF Spectrum & Emitters</h3>
+        <p>Synthesize dynamic multi-band RF world with agile frequency-hopping radars, staggered PRF, rotating antennas, and noise jammers.</p>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-row right">
+      <div class="circle-badge b2"><span class="badge-num">2</span></div>
+      <div class="step-card">
+        <h3 class="t2">Emulate Tunable ES Receiver</h3>
+        <p>Build superheterodyne receiver model constrained by narrow IBW, LO tuning delay, dwell settling intervals, and thermal noise floor.</p>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-row left">
+      <div class="circle-badge b3"><span class="badge-num">3</span></div>
+      <div class="step-card">
+        <h3 class="t3">Deploy Cognitive Schedulers</h3>
+        <p>Train Deep Q-Network and D-UCB bandit agents to dynamically optimize dwell scheduling from live hit/miss feedback.</p>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-row right">
+      <div class="circle-badge b4"><span class="badge-num">4</span></div>
+      <div class="step-card">
+        <h3 class="t4">Evaluate DRDO Figures of Merit</h3>
+        <p>Continuously benchmark Probability of Intercept (Pd), False Alarm Rate (Pfa), MDS sensitivity, and lookahead timing error.</p>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-row left">
+      <div class="circle-badge b5"><span class="badge-num">5</span></div>
+      <div class="step-card">
+        <h3 class="t5">Validate in Closed Loop</h3>
+        <p>Verify adaptive scheduler against sequential and periodic open-loop sweeps across 100,000+ synthetic radar pulse bursts.</p>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step-row right">
+      <div class="circle-badge b6"><span class="badge-num">6</span></div>
+      <div class="step-card">
+        <h3 class="t6">Tactical C2 PPI Deployment</h3>
+        <p>Stream real-time telemetry over WebSockets to 360&deg; PPI radar scope and waterfall display for tactical ESM operators.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
